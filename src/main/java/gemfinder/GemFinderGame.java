@@ -1,31 +1,35 @@
 package gemfinder;
 
-import java.util.OptionalDouble;
-
-import javax.swing.text.Position;
-
 import gemfinder.character.GemCharacter;
-import gemfinder.world.WorldLocator;
+import gemfinder.world.Orientation;
+import gemfinder.world.Position;
+import gemfinder.world.World;
 
 public class GemFinderGame {
-
-    public WorldLocator put(GemCharacter character) {
-        return null;
-    }
-
+    
+    private World<?, ?> world;
+    
     public void play() {
         // TODO Auto-generated method stub
         
     }
-
-    public Position positionOf(GemCharacter character) {
-        // TODO Auto-generated method stub
-        return null;
+    
+    public Position<?, ?> positionOf(GemCharacter character) {
+        return world.findPosition(position -> position.contains(character)).orElseGet(null);
     }
-
-    public OptionalDouble getTurns() {
+    
+    public int getTurns() {
         // TODO Auto-generated method stub
-        return null;
+        return 0;
+    }
+    
+    public void setWorld(World<?, ?> world) {
+        this.world = world;
+    }
+    
+    public World<?, ?> on(World<?, ?> world) {
+        this.world = world;
+        return world;
     }
     
 }
