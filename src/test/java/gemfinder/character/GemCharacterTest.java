@@ -9,6 +9,7 @@ import gemfinder.world.Orientation;
 import gemfinder.world.Position;
 import gemfinder.world.cartesian.CartesianOrientation;
 import gemfinder.world.cartesian.CartesianPosition;
+import gemfinder.world.cartesian.CartesianWorld;
 
 public class GemCharacterTest {
     
@@ -77,7 +78,7 @@ public class GemCharacterTest {
     // Utilitaires
     
     private static CartesianPosition cartesian(int x, int y) {
-        return new CartesianPosition(x, y);
+        return new CartesianPosition(new CartesianWorld(), x, y);
     }
     
     private static void assertMoveForward(CartesianOrientation initialOrientation, CartesianPosition expectedFinalPosition) {

@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import gemfinder.character.GemCharacter;
+import gemfinder.world.Mountain;
 import gemfinder.world.Position;
 import gemfinder.world.World;
 import gemfinder.world.cartesian.CartesianWorld;
@@ -40,7 +41,7 @@ public class GemFinderGameTest {
     @Test
     public void given_a_world_and_a_character_with_moves_I_want_to_know_final_caracter_position_after_playing() throws Exception {
         // Arrange
-        World<?,?> gameworld = new CartesianWorld();
+        World<?, ?> gameworld = new CartesianWorld();
         GemCharacter character = new GemCharacter();
         character.setMoves("MMRMLM");
         
@@ -48,11 +49,33 @@ public class GemFinderGameTest {
         
         // Act
         game.play();
-        Position<?,?> finalPosition = game.positionOf(character);
+        Position<?, ?> finalPosition = game.positionOf(character);
         
         // Assert
         assertThat(finalPosition.toString()).isEqualTo("{x:3, y:5}");
         assertThat(game.getTurns()).isEqualTo(6);
+    }
+    
+    @Test
+    public void given_a_world_with_a_montain_and_a_character_with_moves_I_want_to_know_final_character_position_when_trying_to_cross_mountain()
+            throws Exception {
+        // Arrange
+        World<?, ?> gameworld = new CartesianWorld();
+        Mountain mountain = new Mountain();
+        
+        GemCharacter character = new GemCharacter();
+        character.setMoves("RMM");
+        
+        game.on(gameworld).at(2, 2).addLocalizable(character);
+        game.on(gameworld).at(2, 3).addLocalizable(mountain);
+        
+        // Act
+        game.play();
+        Position<?, ?> finalPosition = game.positionOf(character);
+        
+        // Assert
+        assertThat(finalPosition.toString()).isEqualTo("{x:2, y:2}");
+        assertThat(game.getTurns()).isEqualTo(3);
     }
     
 }

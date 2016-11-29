@@ -4,29 +4,43 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Predicate;
 
-import gemfinder.character.GemCharacter;
+import gemfinder.world.Localizable;
 import gemfinder.world.Position;
 
 public class CartesianPosition implements Position<CartesianPosition, CartesianOrientation> {
     
     private int x;
     private int y;
-    private Collection<GemCharacter> content = new ArrayList<>();
+    private Collection<Localizable> content = new ArrayList<>();
+    private CartesianWorld cartesianWorld;
     
-    public CartesianPosition(int x, int y) {
+    public CartesianPosition(CartesianWorld cartesianWorld, int x, int y) {
+        this.cartesianWorld = cartesianWorld;
+        cartesianWorld.addPosition(this);
         this.x = x;
         this.y = y;
     }
     
     @Override
-    public CartesianPosition addLocalizable(GemCharacter character) {
-        content.add(character);
+    public CartesianPosition addLocalizable(Localizable localizable) {
+        content.add(localizable);
         return this;
     }
     
     @Override
-    public boolean contains(GemCharacter character) {
-        return content.contains(character);
+    public CartesianPosition removeLocalizable(Localizable localizable) {
+        content.remove(localizable);
+        return this;
+    }
+    
+    @Override
+    public Collection<Localizable> getContent() {
+        return content;
+    }
+    
+    @Override
+    public boolean contains(Localizable localizable) {
+        return content.contains(localizable);
     }
     
     @Override
@@ -38,13 +52,13 @@ public class CartesianPosition implements Position<CartesianPosition, CartesianO
     public CartesianPosition translate(CartesianOrientation orientation) {
         switch (orientation) {
             case NORTH:
-                return new CartesianPosition(x, y + 1);
+                return new CartesianPosition(cartesianWorld, x, y + 1);
             case WEST:
-                return new CartesianPosition(x - 1, y);
+                return new CartesianPosition(cartesianWorld, x - 1, y);
             case SOUTH:
-                return new CartesianPosition(x, y - 1);
+                return new CartesianPosition(cartesianWorld, x, y - 1);
             case EAST:
-                return new CartesianPosition(x + 1, y);
+                return new CartesianPosition(cartesianWorld, x + 1, y);
             default:
                 return this;
         }

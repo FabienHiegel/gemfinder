@@ -2,6 +2,7 @@ package gemfinder.world.cartesian;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -10,6 +11,11 @@ import gemfinder.world.cartesian.CartesianPosition.CartesianPositionLocator;
 
 public class CartesianWorld implements World<CartesianPosition, CartesianOrientation> {
     private Collection<CartesianPosition> worldMap = new ArrayList<>();
+    
+    @Override
+    public Collection<CartesianPosition> getWorldMap() {
+        return Collections.unmodifiableCollection(worldMap);
+    }
     
     @Override
     public void addPosition(CartesianPosition position) {
@@ -27,9 +33,7 @@ public class CartesianWorld implements World<CartesianPosition, CartesianOrienta
     }
     
     private CartesianPosition createPosition(int... coordinates) {
-        CartesianPosition position = new CartesianPosition(coordinates[0], coordinates[1]);
-        addPosition(position);
-        return position;
+        return new CartesianPosition(this, coordinates[0], coordinates[1]);
     }
     
 }

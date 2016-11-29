@@ -1,12 +1,17 @@
 package gemfinder.world;
 
-import gemfinder.character.GemCharacter;
+import java.util.Collection;
 
 public interface Position<P extends Position<P, O>, O extends Orientation> {
     
-    P addLocalizable(GemCharacter character);
+    Collection<Localizable> getContent();
     
-    boolean contains(GemCharacter character);
+    P addLocalizable(Localizable character);
+    
+    P removeLocalizable(Localizable character);
+    
+    boolean contains(Localizable character);
     
     P translate(O orientation);
+
 }

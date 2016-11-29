@@ -11,7 +11,7 @@ public class CartesianPositionTest {
     @Test
     public void should_be_shown_as_natural_cartesian_coordinates() throws Exception {
         // Arrange
-        CartesianPosition position = new CartesianPosition(2, 2);
+        CartesianPosition position = new CartesianPosition(new CartesianWorld(), 2, 2);
         
         // Act
         String string = position.toString();
