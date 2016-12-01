@@ -1,10 +1,11 @@
-package gemfinder.world.cartesian;
+package com.dedale.world.cartesian;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 
-import gemfinder.world.cartesian.CartesianPosition;
+import com.dedale.world.cartesian.CartesianPosition;
+import com.dedale.world.cartesian.CartesianWorld;
 
 public class CartesianPositionTest {
     

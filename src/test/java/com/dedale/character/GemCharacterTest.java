@@ -1,19 +1,29 @@
-package gemfinder.character;
+package com.dedale.character;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.internal.util.reflection.Whitebox.getInternalState;
 
+import org.junit.Before;
 import org.junit.Test;
 
-import gemfinder.world.Orientation;
-import gemfinder.world.Position;
-import gemfinder.world.cartesian.CartesianOrientation;
-import gemfinder.world.cartesian.CartesianPosition;
-import gemfinder.world.cartesian.CartesianWorld;
+import com.dedale.character.GemCharacter;
+import com.dedale.world.Mountain;
+import com.dedale.world.Orientation;
+import com.dedale.world.Position;
+import com.dedale.world.cartesian.CartesianOrientation;
+import com.dedale.world.cartesian.CartesianPosition;
+import com.dedale.world.cartesian.CartesianWorld;
 
 public class GemCharacterTest {
     
-    private static final CartesianPosition INITIAL_POSITION = cartesian(1, 1);
+    private CartesianPosition INITIAL_POSITION;
+    private CartesianWorld WORLD;
+    
+    @Before
+    public void initializeWorld() {
+        WORLD = new CartesianWorld();
+        INITIAL_POSITION = cartesian(1, 1);
+    }
     
     @Test
     public void character_should_move_to_north_when_facing_north() throws Exception {
@@ -75,32 +85,48 @@ public class GemCharacterTest {
         assertTurnCounterClockWise(CartesianOrientation.EAST, CartesianOrientation.NORTH);
     }
     
-    // Utilitaires
-    
-    private static CartesianPosition cartesian(int x, int y) {
-        return new CartesianPosition(new CartesianWorld(), x, y);
+    @Test
+    public void character_should_not_move_on_position_containing_a_mountain() throws Exception {
+        // Arrange
+        WORLD.at(1, 2).addLocalizable(new Mountain());
+        GemCharacter gemCharacter = new GemCharacter(CartesianOrientation.NORTH);
+        
+        // Act
+        gemCharacter.move("M", INITIAL_POSITION);
+        Position<?, ?> finalPosition = WORLD.positionOf(gemCharacter);
+        
+        // Assert
+        assertThat(finalPosition).isEqualTo(INITIAL_POSITION);
     }
     
-    private static void assertMoveForward(CartesianOrientation initialOrientation, CartesianPosition expectedFinalPosition) {
+    // Utilitaires
+    
+    private CartesianPosition cartesian(int x, int y) {
+        return WORLD.at(x, y);
+    }
+    
+    private void assertMoveForward(CartesianOrientation initialOrientation, CartesianPosition expectedFinalPosition) {
         assertCharacterMove("M", INITIAL_POSITION, initialOrientation, expectedFinalPosition, initialOrientation);
     }
     
-    private static void assertTurnClockWise(CartesianOrientation initialOrientation, CartesianOrientation expectedFinalOrientation) {
+    private void assertTurnClockWise(CartesianOrientation initialOrientation, CartesianOrientation expectedFinalOrientation) {
         assertCharacterMove("R", INITIAL_POSITION, initialOrientation, INITIAL_POSITION, expectedFinalOrientation);
     }
     
-    private static void assertTurnCounterClockWise(CartesianOrientation initialOrientation, CartesianOrientation expectedFinalOrientation) {
+    private void assertTurnCounterClockWise(CartesianOrientation initialOrientation, CartesianOrientation expectedFinalOrientation) {
         assertCharacterMove("L", INITIAL_POSITION, initialOrientation, INITIAL_POSITION, expectedFinalOrientation);
     }
     
-    private static <P extends Position<P, Orientation>> void assertCharacterMove(String move, CartesianPosition initialPosition,
+    private <P extends Position<P, Orientation>> void assertCharacterMove(String move, CartesianPosition initialPosition,
             CartesianOrientation initialOrientation, CartesianPosition expectedFinalPosition,
             CartesianOrientation expectedFinalOrientation) {
         // Arrange
         GemCharacter gemCharacter = new GemCharacter(initialOrientation);
+        initialPosition.addLocalizable(gemCharacter);
         
         // Act
-        Position<?, ?> finalPosition = gemCharacter.move(move, initialPosition);
+        gemCharacter.move(move, initialPosition);
+        Position<?, ?> finalPosition = WORLD.positionOf(gemCharacter);
         
         // Assert
         assertThat(finalPosition.toString()).isEqualTo(expectedFinalPosition.toString());

@@ -1,12 +1,12 @@
-package gemfinder;
+package com.dedale;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import gemfinder.character.GemCharacter;
-import gemfinder.world.Orientation;
-import gemfinder.world.Position;
-import gemfinder.world.World;
+import com.dedale.character.GemCharacter;
+import com.dedale.world.Orientation;
+import com.dedale.world.Position;
+import com.dedale.world.World;
 
 public class GemFinderGame {
     
@@ -20,11 +20,11 @@ public class GemFinderGame {
                 .map(loc -> (GemCharacter) loc)
                 .collect(Collectors.toList());
         for (GemCharacter gemCharacter : characterList) {
-            P position = positionOf(gemCharacter);
-            List<String> actionss = getTurnActions(gemCharacter);
-            for (String move : actionss) {
+            List<String> actions = getTurnActions(gemCharacter);
+            for (String move : actions) {
                 turnsCount++;
-                position = gemCharacter.move(move, position);
+                P position = positionOf(gemCharacter);
+                gemCharacter.move(move, position);
             }
         }
     }
@@ -34,7 +34,7 @@ public class GemFinderGame {
     }
 
     public <P extends Position<P, O>, O extends Orientation> P positionOf(GemCharacter character) {
-        return (P) world.findPosition(position -> position.contains(character)).orElse(null);
+        return (P) world.positionOf(character);
     }
     
     public int getTurns() {

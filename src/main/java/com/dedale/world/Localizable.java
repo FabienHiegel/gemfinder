@@ -1,4 +1,4 @@
-package gemfinder.world;
+package com.dedale.world;
 
 public interface Localizable {
     

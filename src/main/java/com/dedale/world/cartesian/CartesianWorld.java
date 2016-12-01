@@ -1,4 +1,4 @@
-package gemfinder.world.cartesian;
+package com.dedale.world.cartesian;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -6,8 +6,9 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import gemfinder.world.World;
-import gemfinder.world.cartesian.CartesianPosition.CartesianPositionLocator;
+import com.dedale.character.GemCharacter;
+import com.dedale.world.World;
+import com.dedale.world.cartesian.CartesianPosition.CartesianPositionLocator;
 
 public class CartesianWorld implements World<CartesianPosition, CartesianOrientation> {
     private Collection<CartesianPosition> worldMap = new ArrayList<>();
@@ -24,7 +25,7 @@ public class CartesianWorld implements World<CartesianPosition, CartesianOrienta
     
     @Override
     public CartesianPosition at(int... coordinates) {
-        return findPosition(new CartesianPositionLocator(coordinates)).orElse(createPosition(coordinates));
+        return findPosition(new CartesianPositionLocator(coordinates)).orElse(createAndAddPosition(coordinates));
     }
     
     @Override
@@ -32,7 +33,12 @@ public class CartesianWorld implements World<CartesianPosition, CartesianOrienta
         return worldMap.stream().filter(matcher).findFirst();
     }
     
-    private CartesianPosition createPosition(int... coordinates) {
+    @Override
+    public CartesianPosition positionOf(GemCharacter character) {
+        return findPosition(position -> position.contains(character)).orElse(null);
+    }
+    
+    private CartesianPosition createAndAddPosition(int... coordinates) {
         return new CartesianPosition(this, coordinates[0], coordinates[1]);
     }
     

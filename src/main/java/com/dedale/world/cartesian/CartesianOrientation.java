@@ -1,6 +1,6 @@
-package gemfinder.world.cartesian;
+package com.dedale.world.cartesian;
 
-import gemfinder.world.Orientation;
+import com.dedale.world.Orientation;
 
 public enum CartesianOrientation implements Orientation {
     NORTH, EAST, SOUTH, WEST;

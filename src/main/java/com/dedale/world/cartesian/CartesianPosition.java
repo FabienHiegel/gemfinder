@@ -1,11 +1,11 @@
-package gemfinder.world.cartesian;
+package com.dedale.world.cartesian;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Predicate;
 
-import gemfinder.world.Localizable;
-import gemfinder.world.Position;
+import com.dedale.world.Localizable;
+import com.dedale.world.Position;
 
 public class CartesianPosition implements Position<CartesianPosition, CartesianOrientation> {
     
@@ -52,13 +52,13 @@ public class CartesianPosition implements Position<CartesianPosition, CartesianO
     public CartesianPosition translate(CartesianOrientation orientation) {
         switch (orientation) {
             case NORTH:
-                return new CartesianPosition(cartesianWorld, x, y + 1);
+                return cartesianWorld.at(x, y + 1);
             case WEST:
-                return new CartesianPosition(cartesianWorld, x - 1, y);
+                return cartesianWorld.at(x - 1, y);
             case SOUTH:
-                return new CartesianPosition(cartesianWorld, x, y - 1);
+                return cartesianWorld.at(x, y - 1);
             case EAST:
-                return new CartesianPosition(cartesianWorld, x + 1, y);
+                return cartesianWorld.at(x + 1, y);
             default:
                 return this;
         }

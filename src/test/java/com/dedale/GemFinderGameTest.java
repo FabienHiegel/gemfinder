@@ -1,15 +1,16 @@
-package gemfinder;
+package com.dedale;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import gemfinder.character.GemCharacter;
-import gemfinder.world.Mountain;
-import gemfinder.world.Position;
-import gemfinder.world.World;
-import gemfinder.world.cartesian.CartesianWorld;
+import com.dedale.GemFinderGame;
+import com.dedale.character.GemCharacter;
+import com.dedale.world.Mountain;
+import com.dedale.world.Position;
+import com.dedale.world.World;
+import com.dedale.world.cartesian.CartesianWorld;
 
 public class GemFinderGameTest {
     
@@ -67,7 +68,7 @@ public class GemFinderGameTest {
         character.setMoves("RMM");
         
         game.on(gameworld).at(2, 2).addLocalizable(character);
-        game.on(gameworld).at(2, 3).addLocalizable(mountain);
+        game.on(gameworld).at(3, 2).addLocalizable(mountain);
         
         // Act
         game.play();
