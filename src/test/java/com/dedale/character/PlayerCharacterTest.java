@@ -6,18 +6,17 @@ import static org.mockito.internal.util.reflection.Whitebox.getInternalState;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.dedale.character.GemCharacter;
 import com.dedale.world.Mountain;
-import com.dedale.world.Orientation;
 import com.dedale.world.Position;
+import com.dedale.world.World;
 import com.dedale.world.cartesian.CartesianOrientation;
 import com.dedale.world.cartesian.CartesianPosition;
 import com.dedale.world.cartesian.CartesianWorld;
 
-public class GemCharacterTest {
+public class PlayerCharacterTest {
     
     private CartesianPosition INITIAL_POSITION;
-    private CartesianWorld WORLD;
+    private World WORLD;
     
     @Before
     public void initializeWorld() {
@@ -88,12 +87,15 @@ public class GemCharacterTest {
     @Test
     public void character_should_not_move_on_position_containing_a_mountain() throws Exception {
         // Arrange
+        PlayerCharacter playerCharacter = new PlayerCharacter(CartesianOrientation.NORTH);
+        playerCharacter.addAvailableAction(new Move(WORLD));
+        
         WORLD.at(1, 2).addLocalizable(new Mountain());
-        GemCharacter gemCharacter = new GemCharacter(CartesianOrientation.NORTH);
+        WORLD.at(INITIAL_POSITION).addLocalizable(playerCharacter);
         
         // Act
-        gemCharacter.move("M", INITIAL_POSITION);
-        Position<?, ?> finalPosition = WORLD.positionOf(gemCharacter);
+        playerCharacter.move("M");
+        Position finalPosition = WORLD.positionOf(playerCharacter);
         
         // Assert
         assertThat(finalPosition).isEqualTo(INITIAL_POSITION);
@@ -102,7 +104,7 @@ public class GemCharacterTest {
     // Utilitaires
     
     private CartesianPosition cartesian(int x, int y) {
-        return WORLD.at(x, y);
+        return CartesianPosition.of(x, y);
     }
     
     private void assertMoveForward(CartesianOrientation initialOrientation, CartesianPosition expectedFinalPosition) {
@@ -117,20 +119,20 @@ public class GemCharacterTest {
         assertCharacterMove("L", INITIAL_POSITION, initialOrientation, INITIAL_POSITION, expectedFinalOrientation);
     }
     
-    private <P extends Position<P, Orientation>> void assertCharacterMove(String move, CartesianPosition initialPosition,
-            CartesianOrientation initialOrientation, CartesianPosition expectedFinalPosition,
-            CartesianOrientation expectedFinalOrientation) {
+    private void assertCharacterMove(String move, Position initialPosition, CartesianOrientation initialOrientation,
+            CartesianPosition expectedFinalPosition, CartesianOrientation expectedFinalOrientation) {
         // Arrange
-        GemCharacter gemCharacter = new GemCharacter(initialOrientation);
-        initialPosition.addLocalizable(gemCharacter);
+        PlayerCharacter playerCharacter = new PlayerCharacter(initialOrientation);
+        playerCharacter.addAvailableAction(new Move(WORLD));
+        WORLD.at(initialPosition).addLocalizable(playerCharacter);
         
         // Act
-        gemCharacter.move(move, initialPosition);
-        Position<?, ?> finalPosition = WORLD.positionOf(gemCharacter);
+        playerCharacter.move(move);
+        Position finalPosition = WORLD.positionOf(playerCharacter);
         
         // Assert
         assertThat(finalPosition.toString()).isEqualTo(expectedFinalPosition.toString());
-        assertThat(getInternalState(gemCharacter, "orientation")).isEqualTo(expectedFinalOrientation);
+        assertThat(getInternalState(playerCharacter, "orientation")).isEqualTo(expectedFinalOrientation);
     }
     
 }

@@ -1,46 +1,44 @@
 package com.dedale.world.cartesian;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.function.Predicate;
+import java.util.Arrays;
 
-import com.dedale.world.Localizable;
 import com.dedale.world.Position;
 
-public class CartesianPosition implements Position<CartesianPosition, CartesianOrientation> {
+public class CartesianPosition implements Position {
     
-    private int x;
-    private int y;
-    private Collection<Localizable> content = new ArrayList<>();
-    private CartesianWorld cartesianWorld;
+    private static CartesianPosition[][] positions = new CartesianPosition[][] {};
     
-    public CartesianPosition(CartesianWorld cartesianWorld, int x, int y) {
-        this.cartesianWorld = cartesianWorld;
-        cartesianWorld.addPosition(this);
+    final int x;
+    final int y;
+    
+    public CartesianPosition(int x, int y) {
         this.x = x;
         this.y = y;
     }
     
     @Override
-    public CartesianPosition addLocalizable(Localizable localizable) {
-        content.add(localizable);
-        return this;
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + x;
+        result = prime * result + y;
+        return result;
     }
     
     @Override
-    public CartesianPosition removeLocalizable(Localizable localizable) {
-        content.remove(localizable);
-        return this;
-    }
-    
-    @Override
-    public Collection<Localizable> getContent() {
-        return content;
-    }
-    
-    @Override
-    public boolean contains(Localizable localizable) {
-        return content.contains(localizable);
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        CartesianPosition other = (CartesianPosition) obj;
+        if (x != other.x)
+            return false;
+        if (y != other.y)
+            return false;
+        return true;
     }
     
     @Override
@@ -48,37 +46,30 @@ public class CartesianPosition implements Position<CartesianPosition, CartesianO
         return "{" + "x:" + x + ", " + "y:" + y + "}";
     }
     
-    @Override
-    public CartesianPosition translate(CartesianOrientation orientation) {
-        switch (orientation) {
-            case NORTH:
-                return cartesianWorld.at(x, y + 1);
-            case WEST:
-                return cartesianWorld.at(x - 1, y);
-            case SOUTH:
-                return cartesianWorld.at(x, y - 1);
-            case EAST:
-                return cartesianWorld.at(x + 1, y);
-            default:
-                return this;
-        }
+    public static CartesianPosition of(int... coordinates) {
+        return of(coordinates[0], coordinates[1]);
     }
     
-    static class CartesianPositionLocator implements Predicate<CartesianPosition> {
-        
-        private int y;
-        private int x;
-        
-        public CartesianPositionLocator(int... coordinates) {
-            this.x = coordinates[0];
-            this.y = coordinates[1];
+    public static CartesianPosition of(int x, int y) {
+        if (x >= positions.length) {
+            positions = Arrays.copyOf(positions, x + 1);
+            positions[x] = new CartesianPosition[] {};
+        } else {
+            if (positions[x] == null) {
+                positions[x] = new CartesianPosition[] {};
+            }
         }
         
-        @Override
-        public boolean test(CartesianPosition position) {
-            return this.x == position.x && this.y == position.y;
+        if (y >= positions[x].length) {
+            positions[x] = Arrays.copyOf(positions[x], y + 1);
+            positions[x][y] = new CartesianPosition(x, y);
+        } else {
+            if (positions[x][y] == null) {
+                positions[x][y] = new CartesianPosition(x, y);
+            }
         }
         
+        return positions[x][y];
     }
     
 }

@@ -6,40 +6,59 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import com.dedale.character.GemCharacter;
+import com.dedale.world.Localizable;
+import com.dedale.world.Location;
+import com.dedale.world.Orientation;
+import com.dedale.world.Position;
 import com.dedale.world.World;
-import com.dedale.world.cartesian.CartesianPosition.CartesianPositionLocator;
 
-public class CartesianWorld implements World<CartesianPosition, CartesianOrientation> {
-    private Collection<CartesianPosition> worldMap = new ArrayList<>();
+public class CartesianWorld implements World {
+    private Collection<Location> worldMap = new ArrayList<>();
+    private CartesianTransalator transalator = new CartesianTransalator();
     
-    @Override
-    public Collection<CartesianPosition> getWorldMap() {
+    public Collection<Location> getWorldMap() {
         return Collections.unmodifiableCollection(worldMap);
     }
     
-    @Override
-    public void addPosition(CartesianPosition position) {
-        this.worldMap.add(position);
+    // Location
+    
+    public void addLocation(Location location) {
+        this.worldMap.add(location);
     }
     
-    @Override
-    public CartesianPosition at(int... coordinates) {
-        return findPosition(new CartesianPositionLocator(coordinates)).orElse(createAndAddPosition(coordinates));
+    public Location at(int... coordinates) {
+        CartesianPosition position = CartesianPosition.of(coordinates);
+        return at(position);
     }
     
-    @Override
-    public Optional<CartesianPosition> findPosition(Predicate<? super CartesianPosition> matcher) {
+    public Location at(Position position) {
+        return findLocation(new PositionLocator(position)).orElse(createLocation(position));
+    }
+    
+    public Optional<Location> findLocation(Predicate<? super Location> matcher) {
         return worldMap.stream().filter(matcher).findFirst();
     }
     
-    @Override
-    public CartesianPosition positionOf(GemCharacter character) {
-        return findPosition(position -> position.contains(character)).orElse(null);
+    public Optional<Location> locationOf(Localizable localizable) {
+        return findLocation(location -> location.contains(localizable));
     }
     
-    private CartesianPosition createAndAddPosition(int... coordinates) {
-        return new CartesianPosition(this, coordinates[0], coordinates[1]);
+    // Position
+    
+    public Position positionOf(Localizable localizable) {
+        return locationOf(localizable).map(location -> location.getPosition()).orElse(null);
+    }
+    
+    public Position translate(Position position, Orientation orientation) {
+        return transalator.translate(position, orientation);
+    }
+    
+    // Utilitaires
+    
+    private Location createLocation(Position position) {
+        Location location = new Location(position);
+        worldMap.add(location);
+        return location;
     }
     
 }
