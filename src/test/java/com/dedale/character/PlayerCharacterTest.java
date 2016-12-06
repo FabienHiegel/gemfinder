@@ -88,16 +88,31 @@ public class PlayerCharacterTest {
     public void character_should_not_move_on_position_containing_a_mountain() throws Exception {
         // Arrange
         PlayerCharacter playerCharacter = new PlayerCharacter(CartesianOrientation.NORTH);
-        playerCharacter.addAvailableAction(new Move(WORLD));
         
         WORLD.at(1, 2).addLocalizable(new Mountain());
         WORLD.at(INITIAL_POSITION).addLocalizable(playerCharacter);
         
         // Act
-        playerCharacter.move("M");
+        playerCharacter.doAction(new Move(WORLD));
         Position finalPosition = WORLD.positionOf(playerCharacter);
         
         // Assert
+        assertThat(finalPosition).isEqualTo(INITIAL_POSITION);
+    }
+    
+    @Test
+    public void character_should_not_move_when_action_queue_is_empty() throws Exception {
+        // Arrange
+        PlayerCharacter playerCharacter = new PlayerCharacter(CartesianOrientation.NORTH);
+        WORLD.at(INITIAL_POSITION).addLocalizable(playerCharacter);
+        
+        assertThat(playerCharacter.getActionQueue()).isEmpty();
+        
+        // Act
+        playerCharacter.play();
+        
+        // Assert
+        Position finalPosition = WORLD.positionOf(playerCharacter);
         assertThat(finalPosition).isEqualTo(INITIAL_POSITION);
     }
     
@@ -108,26 +123,27 @@ public class PlayerCharacterTest {
     }
     
     private void assertMoveForward(CartesianOrientation initialOrientation, CartesianPosition expectedFinalPosition) {
-        assertCharacterMove("M", INITIAL_POSITION, initialOrientation, expectedFinalPosition, initialOrientation);
+        assertCharacterMove(new Move(WORLD), INITIAL_POSITION, initialOrientation, expectedFinalPosition, initialOrientation);
     }
     
     private void assertTurnClockWise(CartesianOrientation initialOrientation, CartesianOrientation expectedFinalOrientation) {
-        assertCharacterMove("R", INITIAL_POSITION, initialOrientation, INITIAL_POSITION, expectedFinalOrientation);
+        assertCharacterMove(character -> character.turnClockwise(), INITIAL_POSITION, initialOrientation, INITIAL_POSITION,
+                expectedFinalOrientation);
     }
     
     private void assertTurnCounterClockWise(CartesianOrientation initialOrientation, CartesianOrientation expectedFinalOrientation) {
-        assertCharacterMove("L", INITIAL_POSITION, initialOrientation, INITIAL_POSITION, expectedFinalOrientation);
+        assertCharacterMove(character -> character.turnCounterClockwise(), INITIAL_POSITION, initialOrientation, INITIAL_POSITION,
+                expectedFinalOrientation);
     }
     
-    private void assertCharacterMove(String move, Position initialPosition, CartesianOrientation initialOrientation,
+    private void assertCharacterMove(PlayerCharacterAction move, Position initialPosition, CartesianOrientation initialOrientation,
             CartesianPosition expectedFinalPosition, CartesianOrientation expectedFinalOrientation) {
         // Arrange
         PlayerCharacter playerCharacter = new PlayerCharacter(initialOrientation);
-        playerCharacter.addAvailableAction(new Move(WORLD));
         WORLD.at(initialPosition).addLocalizable(playerCharacter);
         
         // Act
-        playerCharacter.move(move);
+        playerCharacter.doAction(move);
         Position finalPosition = WORLD.positionOf(playerCharacter);
         
         // Assert

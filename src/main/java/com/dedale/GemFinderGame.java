@@ -20,22 +20,27 @@ public class GemFinderGame {
                 .filter(loc -> loc instanceof PlayerCharacter)
                 .map(loc -> (PlayerCharacter) loc)
                 .collect(Collectors.toList());
-        turnsCount = characterList.stream().mapToInt(charact -> charact.getMoves().size()).max().getAsInt();
+        turnsCount = characterList.stream().mapToInt(charact -> charact.getActionQueue().size()).max().getAsInt();
         for (int turn = 0; turn < turnsCount; turn++) {
-            for (PlayerCharacter gemCharacter : characterList) {
-                List<String> turnActions = getTurnActions(gemCharacter);
-                if (turnActions.size() < turn) {
-                    continue;
-                }
-                
-                String action = turnActions.get(turn);
-                gemCharacter.move(action);
+            for (PlayerCharacter playerCharacter : characterList) {
+                playerCharacter.play();
             }
         }
     }
     
-    private List<String> getTurnActions(PlayerCharacter gemCharacter) {
-        return gemCharacter.getMoves();
+    public void playTurn() {
+        List<PlayerCharacter> characterList = world
+                .getWorldMap()
+                .stream()
+                .flatMap(pos -> pos.getContent().stream())
+                .filter(loc -> loc instanceof PlayerCharacter)
+                .map(loc -> (PlayerCharacter) loc)
+                .collect(Collectors.toList());
+        
+        for (PlayerCharacter playerCharacter : characterList) {
+            playerCharacter.play();
+        }
+        turnsCount++;
     }
     
     public Position positionOf(PlayerCharacter character) {

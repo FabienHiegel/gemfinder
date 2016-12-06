@@ -28,7 +28,6 @@ public class GemFinderGameTest {
         World gameworld = new CartesianWorld();
         
         PlayerCharacter character = new PlayerCharacter();
-        character.addAvailableAction(new Move(gameworld));
         game.on(gameworld).at(3, 3).addLocalizable(character);
         
         // Act
@@ -44,8 +43,8 @@ public class GemFinderGameTest {
         // Arrange
         World gameworld = new CartesianWorld();
         PlayerCharacter character = new PlayerCharacter();
-        character.addAvailableAction(new Move(gameworld));
-        character.setMoves("MMRMLM");
+        character.defineAvailableAction("M", new Move(gameworld));
+        character.setActionQueue("MMRMLM");
         
         game.on(gameworld).at(2, 2).addLocalizable(character);
         
@@ -66,8 +65,8 @@ public class GemFinderGameTest {
         Mountain mountain = new Mountain();
         
         PlayerCharacter character = new PlayerCharacter();
-        character.addAvailableAction(new Move(gameworld));
-        character.setMoves("MRMM");
+        character.defineAvailableAction("M", new Move(gameworld));
+        character.setActionQueue("MRMM");
         
         game.on(gameworld).at(2, 2).addLocalizable(character);
         game.on(gameworld).at(3, 3).addLocalizable(mountain);
@@ -87,12 +86,12 @@ public class GemFinderGameTest {
         World gameworld = new CartesianWorld();
         
         PlayerCharacter character = new PlayerCharacter();
-        character.addAvailableAction(new Move(gameworld));
-        character.setMoves("RMM");
+        character.defineAvailableAction("M", new Move(gameworld));
+        character.setActionQueue("RMM");
         
         PlayerCharacter secondCharacter = new PlayerCharacter();
-        secondCharacter.addAvailableAction(new Move(gameworld));
-        secondCharacter.setMoves("RMM");
+        secondCharacter.defineAvailableAction("M", new Move(gameworld));
+        secondCharacter.setActionQueue("RMM");
         
         game.on(gameworld).at(2, 2).addLocalizable(character);
         game.on(gameworld).at(3, 2).addLocalizable(secondCharacter);
@@ -111,12 +110,12 @@ public class GemFinderGameTest {
         World gameworld = new CartesianWorld();
         
         PlayerCharacter character = new PlayerCharacter();
-        character.addAvailableAction(new Move(gameworld));
-        character.setMoves("RMM");
+        character.defineAvailableAction("M", new Move(gameworld));
+        character.setActionQueue("RMM");
         
         PlayerCharacter secondCharacter = new PlayerCharacter();
-        secondCharacter.addAvailableAction(new Move(gameworld));
-        secondCharacter.setMoves("RMM");
+        secondCharacter.defineAvailableAction("M", new Move(gameworld));
+        secondCharacter.setActionQueue("RMM");
         
         game.on(gameworld).at(2, 2).addLocalizable(character);
         game.on(gameworld).at(3, 2).addLocalizable(secondCharacter);
@@ -126,6 +125,57 @@ public class GemFinderGameTest {
         
         // Assert
         assertThat(game.getTurns()).isEqualTo(3);
+    }
+    
+    @Test
+    public void given_a_world_with_two_characters_with_moves_I_want_them_to_move_only_once_for_a_turn() throws Exception {
+        // Arrange
+        World gameworld = new CartesianWorld();
+        
+        PlayerCharacter character = new PlayerCharacter();
+        character.defineAvailableAction("M", new Move(gameworld));
+        character.setActionQueue("MMM");
+        
+        PlayerCharacter secondCharacter = new PlayerCharacter();
+        secondCharacter.defineAvailableAction("M", new Move(gameworld));
+        secondCharacter.setActionQueue("MMM");
+        
+        game.on(gameworld).at(2, 2).addLocalizable(character);
+        game.on(gameworld).at(3, 2).addLocalizable(secondCharacter);
+        
+        // Act
+        game.playTurn();
+        
+        // Assert
+        assertThat(game.getTurns()).isEqualTo(1);
+        assertThat(game.positionOf(character)).isEqualTo(CartesianPosition.of(2, 3));
+        assertThat(game.positionOf(secondCharacter)).isEqualTo(CartesianPosition.of(3, 3));
+    }
+    
+    @Test
+    public void given_a_world_with_two_characters_with_moves_I_want_them_to_move_twice_for_two_turns() throws Exception {
+        // Arrange
+        World gameworld = new CartesianWorld();
+        
+        PlayerCharacter character = new PlayerCharacter();
+        character.defineAvailableAction("M", new Move(gameworld));
+        character.setActionQueue("MRM");
+        
+        PlayerCharacter secondCharacter = new PlayerCharacter();
+        secondCharacter.defineAvailableAction("M", new Move(gameworld));
+        secondCharacter.setActionQueue("MMM");
+        
+        game.on(gameworld).at(2, 2).addLocalizable(character);
+        game.on(gameworld).at(3, 2).addLocalizable(secondCharacter);
+        
+        // Act
+        game.playTurn();
+        game.playTurn();
+        
+        // Assert
+        assertThat(game.getTurns()).isEqualTo(2);
+        assertThat(game.positionOf(character)).isEqualTo(CartesianPosition.of(2, 3));
+        assertThat(game.positionOf(secondCharacter)).isEqualTo(CartesianPosition.of(3, 4));
     }
     
 }

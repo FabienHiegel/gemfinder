@@ -1,8 +1,8 @@
 package com.dedale.character;
 
 @FunctionalInterface
-interface PlayerCharacterAction<T extends PlayerCharacter>{
+interface PlayerCharacterAction{
     
-    void call(T character);
+    void execute(PlayerCharacter character);
     
 }

@@ -1,9 +1,9 @@
 package com.dedale.character;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
 import com.dedale.world.Localizable;
 import com.dedale.world.Orientation;
@@ -12,8 +12,9 @@ import com.dedale.world.cartesian.CartesianOrientation;
 public class PlayerCharacter implements Localizable {
     
     Orientation orientation;
-    private List<String> moves = Collections.emptyList();
-    private List<PlayerCharacterAction<? super PlayerCharacter>> availableActions = new ArrayList<>();
+    private LinkedList<PlayerCharacterAction> actionQueue = new LinkedList<>();
+    // TODO FH : c'est une FACTORY/Pool d'actions
+    private Map<String, PlayerCharacterAction> availableActionsByType = new HashMap<>();
     
     public PlayerCharacter() {
         this(CartesianOrientation.NORTH);
@@ -21,37 +22,67 @@ public class PlayerCharacter implements Localizable {
     
     PlayerCharacter(Orientation orientation) {
         this.orientation = orientation;
+        defineAvailableAction("R", PlayerCharacter::turnClockwise);
+        defineAvailableAction("L", PlayerCharacter::turnCounterClockwise);
     }
     
-    public void addAvailableAction(PlayerCharacterAction<? super PlayerCharacter> move) {
-        availableActions.add(move);
+    public void play() {
+        PlayerCharacterAction processingAction = nextAction();
+        if (processingAction == null) {
+            return;
+        }
+        doAction(processingAction);
+        releaseAction(processingAction);
     }
     
-    public void move(String move) {
-        switch (move) {
-            case "M":
-                for (PlayerCharacterAction<? super PlayerCharacter> playerCharacterAction : availableActions) {
-                    playerCharacterAction.call(this);
-                }
-                break;
-            case "R":
-                orientation = orientation.clockwise();
-                break;
-            case "L":
-                orientation = orientation.counterClockwise();
-                break;
-            default:
-                // DO NOTHING
+    public void doAction(PlayerCharacterAction processingAction) {
+        processingAction.execute(this);
+    }
+    
+    public Collection<PlayerCharacterAction> getActionQueue() {
+        return actionQueue;
+    }
+    
+    @Deprecated
+    public void setActionQueue(String moves) {
+        for (String move : moves.split("")) {
+            addAction(move);
         }
     }
     
-    public List<String> getMoves() {
-        return moves;
+    @Deprecated
+    private void addAction(String actionType) {
+        addAction(getAvailableAction(actionType));
     }
     
-    public void setMoves(String moves) {
-        this.moves = Arrays.asList(moves.split(""));
+    public void addAction(PlayerCharacterAction action) {
+        actionQueue.add(action);
     }
-
+    
+    private PlayerCharacterAction nextAction() {
+        return actionQueue.peekFirst();
+    }
+    
+    private void releaseAction(PlayerCharacterAction action) {
+        actionQueue.remove(action);
+    }
+    
+    @Deprecated
+    public void defineAvailableAction(String actionType, PlayerCharacterAction action) {
+        availableActionsByType.put(actionType, action);
+    }
+    
+    @Deprecated
+    private PlayerCharacterAction getAvailableAction(String actionType) {
+        return availableActionsByType.get(actionType);
+    }
+    
+    void turnCounterClockwise() {
+        orientation = orientation.counterClockwise();
+    }
+    
+    void turnClockwise() {
+        orientation = orientation.clockwise();
+    }
     
 }

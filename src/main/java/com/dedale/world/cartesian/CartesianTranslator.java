@@ -3,7 +3,7 @@ package com.dedale.world.cartesian;
 import com.dedale.world.Orientation;
 import com.dedale.world.Position;
 
-public class CartesianTransalator {
+public class CartesianTranslator {
     
     public Position translate(Position position, Orientation orientation) {
         if (!(position instanceof CartesianPosition && orientation instanceof CartesianOrientation)) {

@@ -14,7 +14,7 @@ import com.dedale.world.World;
 
 public class CartesianWorld implements World {
     private Collection<Location> worldMap = new ArrayList<>();
-    private CartesianTransalator transalator = new CartesianTransalator();
+    private CartesianTranslator translator = new CartesianTranslator();
     
     public Collection<Location> getWorldMap() {
         return Collections.unmodifiableCollection(worldMap);
@@ -50,7 +50,7 @@ public class CartesianWorld implements World {
     }
     
     public Position translate(Position position, Orientation orientation) {
-        return transalator.translate(position, orientation);
+        return translator.translate(position, orientation);
     }
     
     // Utilitaires
