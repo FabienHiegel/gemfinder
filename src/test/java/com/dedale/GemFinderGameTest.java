@@ -7,11 +7,11 @@ import org.junit.Test;
 
 import com.dedale.character.Move;
 import com.dedale.character.PlayerCharacter;
-import com.dedale.world.Mountain;
 import com.dedale.world.Position;
 import com.dedale.world.World;
 import com.dedale.world.cartesian.CartesianPosition;
 import com.dedale.world.cartesian.CartesianWorld;
+import com.dedale.world.landforms.Mountain;
 
 public class GemFinderGameTest {
     

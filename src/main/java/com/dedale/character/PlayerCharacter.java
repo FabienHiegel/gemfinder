@@ -44,15 +44,11 @@ public class PlayerCharacter implements Localizable {
     }
     
     @Deprecated
-    public void setActionQueue(String moves) {
-        for (String move : moves.split("")) {
-            addAction(move);
+    public void setActionQueue(String actionTypes) {
+        for (String actionType : actionTypes.split("")) {
+            PlayerCharacterAction action = createAction(actionType);
+            addAction(action);
         }
-    }
-    
-    @Deprecated
-    private void addAction(String actionType) {
-        addAction(getAvailableAction(actionType));
     }
     
     public void addAction(PlayerCharacterAction action) {
@@ -73,7 +69,7 @@ public class PlayerCharacter implements Localizable {
     }
     
     @Deprecated
-    private PlayerCharacterAction getAvailableAction(String actionType) {
+    private PlayerCharacterAction createAction(String actionType) {
         return availableActionsByType.get(actionType);
     }
     

@@ -12,19 +12,21 @@ public class GemFinderGame {
     private World world;
     private int turnsCount;
     
+    public World on(World world) {
+        this.world = world;
+        return world;
+    }
+    
     public void play() {
         List<PlayerCharacter> characterList = world
                 .getWorldMap()
                 .stream()
-                .flatMap(pos -> pos.getContent().stream())
-                .filter(loc -> loc instanceof PlayerCharacter)
-                .map(loc -> (PlayerCharacter) loc)
+                .flatMap(pos -> pos.findListOf(PlayerCharacter.class))
                 .collect(Collectors.toList());
-        turnsCount = characterList.stream().mapToInt(charact -> charact.getActionQueue().size()).max().getAsInt();
-        for (int turn = 0; turn < turnsCount; turn++) {
-            for (PlayerCharacter playerCharacter : characterList) {
-                playerCharacter.play();
-            }
+        int maxTurnsCount = characterList.stream().mapToInt(charact -> charact.getActionQueue().size()).max().getAsInt();
+        while (maxTurnsCount > 0) {
+            playTurn();
+            maxTurnsCount--;
         }
     }
     
@@ -32,9 +34,7 @@ public class GemFinderGame {
         List<PlayerCharacter> characterList = world
                 .getWorldMap()
                 .stream()
-                .flatMap(pos -> pos.getContent().stream())
-                .filter(loc -> loc instanceof PlayerCharacter)
-                .map(loc -> (PlayerCharacter) loc)
+                .flatMap(pos -> pos.findListOf(PlayerCharacter.class))
                 .collect(Collectors.toList());
         
         for (PlayerCharacter playerCharacter : characterList) {
@@ -49,15 +49,6 @@ public class GemFinderGame {
     
     public int getTurns() {
         return turnsCount;
-    }
-    
-    public void setWorld(World world) {
-        this.world = world;
-    }
-    
-    public World on(World world) {
-        this.world = world;
-        return world;
     }
     
 }

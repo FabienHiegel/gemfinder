@@ -1,9 +1,9 @@
 package com.dedale.character;
 
 import com.dedale.world.Location;
-import com.dedale.world.Mountain;
 import com.dedale.world.Position;
 import com.dedale.world.World;
+import com.dedale.world.landforms.Mountain;
 
 // TODO : faire en sorte  d'externaliser les stratéiges de déplacement lors d'un prochain refactor.
 public class Move implements PlayerCharacterAction {

@@ -23,12 +23,11 @@ public class CartesianWorld implements World {
     // Location
     
     public void addLocation(Location location) {
-        this.worldMap.add(location);
+        worldMap.add(location);
     }
     
     public Location at(int... coordinates) {
-        CartesianPosition position = CartesianPosition.of(coordinates);
-        return at(position);
+        return at(CartesianPosition.of(coordinates));
     }
     
     public Location at(Position position) {
@@ -46,7 +45,9 @@ public class CartesianWorld implements World {
     // Position
     
     public Position positionOf(Localizable localizable) {
-        return locationOf(localizable).map(location -> location.getPosition()).orElse(null);
+        return locationOf(localizable)
+                .map(location -> location.getPosition())
+                .orElse(null);
     }
     
     public Position translate(Position position, Orientation orientation) {
@@ -57,7 +58,7 @@ public class CartesianWorld implements World {
     
     private Location createLocation(Position position) {
         Location location = new Location(position);
-        worldMap.add(location);
+        addLocation(location);
         return location;
     }
     

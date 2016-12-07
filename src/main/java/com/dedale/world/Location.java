@@ -28,10 +28,6 @@ public class Location {
         return this;
     }
     
-    public Collection<Localizable> getContent() {
-        return content;
-    }
-    
     public boolean contains(Localizable localizable) {
         return content.contains(localizable);
     }
@@ -42,6 +38,11 @@ public class Location {
 
     protected Stream<Localizable> findListOf(Predicate<Localizable> predicate) {
         return content.stream().filter(predicate);
+    }
+    
+    public <T extends Localizable> Stream<T> findListOf(Class<T> localizableClass) {
+        return findListOf(localizableClass::isInstance)
+                .map(localizableClass::cast);
     }
     
 }
