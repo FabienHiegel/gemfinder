@@ -3,6 +3,6 @@ package com.dedale.character;
 @FunctionalInterface
 interface PlayerCharacterAction{
     
-    void execute(PlayerCharacter character);
+    void execute(PlayerCharacter playerCharacter);
     
 }

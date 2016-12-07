@@ -6,6 +6,7 @@ import static org.mockito.internal.util.reflection.Whitebox.getInternalState;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.dedale.item.Gem;
 import com.dedale.world.Position;
 import com.dedale.world.World;
 import com.dedale.world.cartesian.CartesianOrientation;
@@ -114,6 +115,34 @@ public class PlayerCharacterTest {
         // Assert
         Position finalPosition = WORLD.positionOf(playerCharacter);
         assertThat(finalPosition).isEqualTo(INITIAL_POSITION);
+    }
+    
+    @Test
+    public void character_should_grab_gem() throws Exception {
+        // Arrange
+        PlayerCharacter playerCharacter = new PlayerCharacter();
+        Gem gem = new Gem();
+        PlayerCharacterAction processingAction = new Grab(gem);
+        
+        // Act
+        playerCharacter.doAction(processingAction);
+        
+        // Assert
+        assertThat(playerCharacter.getGems()).contains(gem);
+    }
+    @Test
+    public void character_should_dig_then_grab_gem() throws Exception {
+        // Arrange
+        PlayerCharacter playerCharacter = new PlayerCharacter();
+        WORLD.at(INITIAL_POSITION).addLocalizable(playerCharacter);
+        Gem gem = new Gem();
+        WORLD.at(INITIAL_POSITION).addLocalizable(gem);
+        
+        // Act
+        playerCharacter.doAction(new Dig(WORLD));
+        
+        // Assert
+        assertThat(playerCharacter.getGems()).contains(gem);
     }
     
     // Utilitaires

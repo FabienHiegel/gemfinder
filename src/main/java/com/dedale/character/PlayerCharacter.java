@@ -1,10 +1,12 @@
 package com.dedale.character;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import com.dedale.item.Gem;
 import com.dedale.world.Localizable;
 import com.dedale.world.Orientation;
 import com.dedale.world.cartesian.CartesianOrientation;
@@ -15,6 +17,7 @@ public class PlayerCharacter implements Localizable {
     private LinkedList<PlayerCharacterAction> actionQueue = new LinkedList<>();
     // TODO FH : c'est une FACTORY/Pool d'actions
     private Map<String, PlayerCharacterAction> availableActionsByType = new HashMap<>();
+    private Collection<Gem> gems = new ArrayList<>();
     
     public PlayerCharacter() {
         this(CartesianOrientation.NORTH);
@@ -79,6 +82,15 @@ public class PlayerCharacter implements Localizable {
     
     void turnClockwise() {
         orientation = orientation.clockwise();
+    }
+
+
+    public Collection<Gem> getGems() {
+        return gems;
+    }
+
+    public void addGem(Gem gem) {
+        gems.add(gem);
     }
     
 }
