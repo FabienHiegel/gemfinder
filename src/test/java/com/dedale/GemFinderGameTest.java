@@ -2,6 +2,12 @@ package com.dedale;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.function.Function;
+
+import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -186,12 +192,40 @@ public class GemFinderGameTest {
         // Assert
         assertThat(character.getGems()).hasSize(1);
     }
-
+    
+    @Test
+    public void given_a_world_with_differents_item_I_want_to_print_board_before_everything_changed() throws Exception {
+        // Arrange
+        game.on(gameworld).at(2, 2).addLocalizable(createCharacter());
+        game.on(gameworld).at(2, 3).addLocalizable(new Gem());
+        doNTimes(5, i -> game.on(gameworld).at(4 + i, 4).addLocalizable(new Mountain()));
+        
+        // Act
+        String board = game.printBoard();
+        
+        // Assert
+        assertThat(board).isEqualTo(getResourceFile("board"));
+    }
+    
+    // Utilitaires
+    
+    private <R> R doNTimes(int n, Function<Integer, R> function) {
+        R result = (R) Void.TYPE;
+        for (int i = 1; i <= n; i++) {
+            result = function.apply(i);
+        }
+        return result;
+    }
+    
     private PlayerCharacter createCharacter() {
         PlayerCharacter character = new PlayerCharacter();
         character.defineAvailableAction("M", new Move(gameworld));
         character.defineAvailableAction("D", new Dig(gameworld));
         return character;
+    }
+    
+    private static String getResourceFile(String filePath) {
+        return TestUtils.getResourceFile(GemFinderGameTest.class, filePath);
     }
     
 }

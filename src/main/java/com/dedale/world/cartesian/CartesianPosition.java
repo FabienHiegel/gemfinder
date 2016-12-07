@@ -1,12 +1,13 @@
 package com.dedale.world.cartesian;
 
-import java.util.Arrays;
+import java.util.Map;
+import java.util.TreeMap;
 
 import com.dedale.world.Position;
 
 public class CartesianPosition implements Position {
     
-    private static CartesianPosition[][] positions = new CartesianPosition[][] {};
+    private static Map<Integer, Map<Integer, CartesianPosition>> positions = new TreeMap<>();
     
     final int x;
     final int y;
@@ -51,25 +52,13 @@ public class CartesianPosition implements Position {
     }
     
     public static CartesianPosition of(int x, int y) {
-        if (x >= positions.length) {
-            positions = Arrays.copyOf(positions, x + 1);
-            positions[x] = new CartesianPosition[] {};
-        } else {
-            if (positions[x] == null) {
-                positions[x] = new CartesianPosition[] {};
-            }
+        if (positions.get(x) == null) {
+            positions.put(x, new TreeMap<>());
         }
-        
-        if (y >= positions[x].length) {
-            positions[x] = Arrays.copyOf(positions[x], y + 1);
-            positions[x][y] = new CartesianPosition(x, y);
-        } else {
-            if (positions[x][y] == null) {
-                positions[x][y] = new CartesianPosition(x, y);
-            }
+        if (positions.get(x).get(y) == null) {
+            positions.get(x).put(y, new CartesianPosition(x, y));
         }
-        
-        return positions[x][y];
+        return positions.get(x).get(y);
     }
     
 }

@@ -2,6 +2,7 @@ package com.dedale.world;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -36,7 +37,11 @@ public class Location {
         return findListOf(predicate).findAny().isPresent();
     }
 
-    protected Stream<Localizable> findListOf(Predicate<Localizable> predicate) {
+    public Optional<Localizable> findOneOf(Predicate<Localizable> predicate) {
+        return content.stream().filter(predicate).findFirst();
+    }
+    
+    public Stream<Localizable> findListOf(Predicate<Localizable> predicate) {
         return content.stream().filter(predicate);
     }
     

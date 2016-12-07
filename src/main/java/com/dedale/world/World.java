@@ -23,5 +23,11 @@ public interface World {
     Position positionOf(Localizable localizable);
     
     Position translate(Position position, Orientation orientation);
+
+    // Board
+    
+    String toBoard();
+
+    String regionToBoard(Position origin, int... coordinatesBounds);
     
 }

@@ -50,5 +50,15 @@ public class GemFinderGame {
     public int getTurns() {
         return turnsCount;
     }
+
+    public String printBoard() {
+        StringBuilder boardBuilder = new StringBuilder();
+        appendWorld(boardBuilder, world);
+        return boardBuilder.toString();
+    }
+
+    private void appendWorld(StringBuilder boardBuilder, World world) {
+        boardBuilder.append(world.toBoard());
+    }
     
 }
