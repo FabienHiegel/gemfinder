@@ -130,6 +130,7 @@ public class PlayerCharacterTest {
         // Assert
         assertThat(playerCharacter.getGems()).contains(gem);
     }
+    
     @Test
     public void character_should_dig_then_grab_gem() throws Exception {
         // Arrange
@@ -145,6 +146,23 @@ public class PlayerCharacterTest {
         assertThat(playerCharacter.getGems()).contains(gem);
     }
     
+    @Test
+    public void character_with_quickturn_ability_may_move_immediately_after_turn() throws Exception {
+        // Arrange
+        PlayerCharacter playerCharacter = new PlayerCharacter();
+        // playerCharacter.addAbility(new QuickTurn());
+        
+        WORLD.at(INITIAL_POSITION).addLocalizable(playerCharacter);
+        playerCharacter.addAction(new Move(WORLD));
+        
+        // Act
+        playerCharacter.doAction(new TurnClockwise());
+        
+        // Assert
+        assertThat(WORLD.positionOf(playerCharacter)).isEqualTo(cartesian(2, 1));
+        assertThat(getInternalState(playerCharacter, "orientation")).isEqualTo(CartesianOrientation.EAST);
+    }
+    
     // Utilitaires
     
     private CartesianPosition cartesian(int x, int y) {
@@ -156,13 +174,11 @@ public class PlayerCharacterTest {
     }
     
     private void assertTurnClockWise(CartesianOrientation initialOrientation, CartesianOrientation expectedFinalOrientation) {
-        assertCharacterMove(character -> character.turnClockwise(), INITIAL_POSITION, initialOrientation, INITIAL_POSITION,
-                expectedFinalOrientation);
+        assertCharacterMove(new TurnClockwise(), INITIAL_POSITION, initialOrientation, INITIAL_POSITION, expectedFinalOrientation);
     }
     
     private void assertTurnCounterClockWise(CartesianOrientation initialOrientation, CartesianOrientation expectedFinalOrientation) {
-        assertCharacterMove(character -> character.turnCounterClockwise(), INITIAL_POSITION, initialOrientation, INITIAL_POSITION,
-                expectedFinalOrientation);
+        assertCharacterMove(new TurnCounterClockwise(), INITIAL_POSITION, initialOrientation, INITIAL_POSITION, expectedFinalOrientation);
     }
     
     private void assertCharacterMove(PlayerCharacterAction move, Position initialPosition, CartesianOrientation initialOrientation,
@@ -176,7 +192,7 @@ public class PlayerCharacterTest {
         Position finalPosition = WORLD.positionOf(playerCharacter);
         
         // Assert
-        assertThat(finalPosition.toString()).isEqualTo(expectedFinalPosition.toString());
+        assertThat(finalPosition).isEqualTo(expectedFinalPosition);
         assertThat(getInternalState(playerCharacter, "orientation")).isEqualTo(expectedFinalOrientation);
     }
     

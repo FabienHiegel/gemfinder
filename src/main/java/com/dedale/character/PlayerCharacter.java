@@ -25,8 +25,8 @@ public class PlayerCharacter implements Localizable {
     
     PlayerCharacter(Orientation orientation) {
         this.orientation = orientation;
-        defineAvailableAction("R", PlayerCharacter::turnClockwise);
-        defineAvailableAction("L", PlayerCharacter::turnCounterClockwise);
+        defineAvailableAction("R", new TurnClockwise());
+        defineAvailableAction("L", new TurnCounterClockwise());
     }
     
     public void play() {
@@ -76,15 +76,6 @@ public class PlayerCharacter implements Localizable {
         return availableActionsByType.get(actionType);
     }
     
-    void turnCounterClockwise() {
-        orientation = orientation.counterClockwise();
-    }
-    
-    void turnClockwise() {
-        orientation = orientation.clockwise();
-    }
-
-
     public Collection<Gem> getGems() {
         return gems;
     }
