@@ -6,6 +6,13 @@ import static org.mockito.internal.util.reflection.Whitebox.getInternalState;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.dedale.character.ability.QuickTurn;
+import com.dedale.character.action.Dig;
+import com.dedale.character.action.Grab;
+import com.dedale.character.action.Move;
+import com.dedale.character.action.PlayerCharacterAction;
+import com.dedale.character.action.TurnClockwise;
+import com.dedale.character.action.TurnCounterClockwise;
 import com.dedale.item.Gem;
 import com.dedale.world.Position;
 import com.dedale.world.World;
@@ -150,7 +157,7 @@ public class PlayerCharacterTest {
     public void character_with_quickturn_ability_may_move_immediately_after_turn() throws Exception {
         // Arrange
         PlayerCharacter playerCharacter = new PlayerCharacter();
-        // playerCharacter.addAbility(new QuickTurn());
+        playerCharacter.addAbility(new QuickTurn());
         
         WORLD.at(INITIAL_POSITION).addLocalizable(playerCharacter);
         playerCharacter.addAction(new Move(WORLD));
@@ -161,6 +168,29 @@ public class PlayerCharacterTest {
         // Assert
         assertThat(WORLD.positionOf(playerCharacter)).isEqualTo(cartesian(2, 1));
         assertThat(getInternalState(playerCharacter, "orientation")).isEqualTo(CartesianOrientation.EAST);
+    }
+    
+    @Test
+    public void character_with_quickturn_ability_may_turn_immediately_after_turn_but_cannot_move_anymore() throws Exception {
+    	// Arrange
+    	PlayerCharacter playerCharacter = new PlayerCharacter();
+    	playerCharacter.addAbility(new QuickTurn());
+    	
+    	WORLD.at(INITIAL_POSITION).addLocalizable(playerCharacter);
+    	playerCharacter.addAction(new TurnClockwise());
+    	playerCharacter.addAction(new TurnClockwise());
+    	playerCharacter.addAction(new Move(WORLD));
+    	playerCharacter.addAction(new TurnClockwise());
+    	playerCharacter.addAction(new TurnClockwise());
+    	
+    	// Act
+    	playerCharacter.play();
+    	playerCharacter.play();
+    	playerCharacter.play();
+    	
+    	// Assert
+    	assertThat(WORLD.positionOf(playerCharacter)).isEqualTo(cartesian(1, 0));
+    	assertThat(getInternalState(playerCharacter, "orientation")).isEqualTo(CartesianOrientation.NORTH);
     }
     
     // Utilitaires

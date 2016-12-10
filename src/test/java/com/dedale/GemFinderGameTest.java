@@ -7,9 +7,9 @@ import java.util.function.Function;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.dedale.character.Dig;
-import com.dedale.character.Move;
 import com.dedale.character.PlayerCharacter;
+import com.dedale.character.action.Dig;
+import com.dedale.character.action.Move;
 import com.dedale.item.Gem;
 import com.dedale.world.World;
 import com.dedale.world.cartesian.CartesianPosition;

@@ -1,11 +1,12 @@
-package com.dedale.character;
+package com.dedale.character.action;
 
+import com.dedale.character.PlayerCharacter;
 import com.dedale.world.Location;
 import com.dedale.world.Position;
 import com.dedale.world.World;
 import com.dedale.world.landforms.Mountain;
 
-// TODO : faire en sorte  d'externaliser les stratéiges de déplacement lors d'un prochain refactor.
+// TODO : faire en sorte  d'externaliser les stratégies de déplacement lors d'un prochain refactor.
 public class Move implements PlayerCharacterAction {
     private World world;
     
@@ -20,7 +21,7 @@ public class Move implements PlayerCharacterAction {
                 .orElseThrow(() -> new IllegalStateException("World does not contain player."));
         
         Position position = location.getPosition();
-        Position updatedPosition = world.translate(position, playerCharacter.orientation);
+        Position updatedPosition = world.translate(position, playerCharacter.getOrientation());
         
         if (world.at(updatedPosition).contains(contentItem -> contentItem instanceof Mountain)) {
             return;
