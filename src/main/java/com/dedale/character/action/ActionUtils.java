@@ -7,9 +7,13 @@ import com.dedale.character.ability.Ability;
 
 class ActionUtils {
 
-	public void applyAbility(Class<? extends Ability> abilityClass, PlayerCharacter playerCharacter) {
+	public PlayerCharacterAction applyAbility(Class<? extends Ability> abilityClass, PlayerCharacter playerCharacter,
+			PlayerCharacterAction action) {
 		Optional<? extends Ability> optAbility = playerCharacter.findAbility(abilityClass);
-		optAbility.ifPresent(ability -> ability.apply(playerCharacter));
+		if (optAbility.isPresent()) {
+			return optAbility.get().apply(action);
+		}
+		return action;
 	}
-	
+
 }

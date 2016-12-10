@@ -10,7 +10,6 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import com.dedale.character.ability.Ability;
-import com.dedale.character.ability.QuickTurn;
 import com.dedale.character.action.PlayerCharacterAction;
 import com.dedale.character.action.TurnClockwise;
 import com.dedale.character.action.TurnCounterClockwise;
@@ -45,7 +44,7 @@ public class PlayerCharacter implements Localizable {
 	public void setOrientation(Orientation orientation) {
 		this.orientation = orientation;
 	}
-	
+
 	// actions
 
 	public Collection<PlayerCharacterAction> getActionQueue() {
@@ -65,7 +64,13 @@ public class PlayerCharacter implements Localizable {
 	}
 
 	public void doAction(PlayerCharacterAction processingAction) {
-		processingAction.execute(this);
+		PlayerCharacterAction action = processingAction;
+		Optional<Ability> optAbility = findAbility(ability -> ability.handle(processingAction));
+		if (optAbility.isPresent()) {
+			action = optAbility.get().apply(action);
+		}
+		
+		action.execute(this);
 	}
 
 	@Deprecated
@@ -91,7 +96,7 @@ public class PlayerCharacter implements Localizable {
 	}
 
 	// inventory
-	
+
 	public Collection<Gem> getGems() {
 		return gems;
 	}
@@ -99,10 +104,10 @@ public class PlayerCharacter implements Localizable {
 	public void addGem(Gem gem) {
 		gems.add(gem);
 	}
-	
+
 	// abilities
 
-	public void addAbility(QuickTurn ability) {
+	public void addAbility(Ability ability) {
 		abilities.add(ability);
 	}
 
