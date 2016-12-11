@@ -1,5 +1,6 @@
-package com.dedale.character;
+package com.dedale.character.action;
 
+import com.dedale.character.PlayerCharacter;
 import com.dedale.item.Gem;
 import com.dedale.world.Location;
 import com.dedale.world.World;

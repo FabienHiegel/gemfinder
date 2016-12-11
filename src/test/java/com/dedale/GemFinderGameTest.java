@@ -2,18 +2,14 @@ package com.dedale;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 import java.util.function.Function;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.dedale.character.Dig;
-import com.dedale.character.Move;
 import com.dedale.character.PlayerCharacter;
+import com.dedale.character.action.Dig;
+import com.dedale.character.action.Move;
 import com.dedale.item.Gem;
 import com.dedale.world.World;
 import com.dedale.world.cartesian.CartesianPosition;
