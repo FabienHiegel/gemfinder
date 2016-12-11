@@ -38,7 +38,7 @@ public class GemFinderGame {
                 .collect(Collectors.toList());
         
         for (PlayerCharacter playerCharacter : characterList) {
-            playerCharacter.play();
+            playerCharacter.doNextAction();
         }
         turnsCount++;
     }

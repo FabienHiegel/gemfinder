@@ -6,11 +6,12 @@ import static org.mockito.internal.util.reflection.Whitebox.getInternalState;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.dedale.character.ability.QuickTurn;
 import com.dedale.character.action.Dig;
+import com.dedale.character.action.FlyAction;
+import com.dedale.character.action.FlyAbility;
 import com.dedale.character.action.Grab;
 import com.dedale.character.action.Move;
-import com.dedale.character.action.PlayerCharacterAction;
+import com.dedale.character.action.TurnAbility;
 import com.dedale.character.action.TurnClockwise;
 import com.dedale.character.action.TurnCounterClockwise;
 import com.dedale.item.Gem;
@@ -95,10 +96,8 @@ public class PlayerCharacterTest {
     @Test
     public void character_should_not_move_on_position_containing_a_mountain() throws Exception {
         // Arrange
-        PlayerCharacter playerCharacter = new PlayerCharacter(CartesianOrientation.NORTH);
-        
+    	PlayerCharacter playerCharacter = createCharacter();
         WORLD.at(1, 2).addLocalizable(new Mountain());
-        WORLD.at(INITIAL_POSITION).addLocalizable(playerCharacter);
         
         // Act
         playerCharacter.doAction(new Move(WORLD));
@@ -111,13 +110,11 @@ public class PlayerCharacterTest {
     @Test
     public void character_should_not_move_when_action_queue_is_empty() throws Exception {
         // Arrange
-        PlayerCharacter playerCharacter = new PlayerCharacter(CartesianOrientation.NORTH);
-        WORLD.at(INITIAL_POSITION).addLocalizable(playerCharacter);
-        
+    	PlayerCharacter playerCharacter = createCharacter();        
         assertThat(playerCharacter.getActionQueue()).isEmpty();
         
         // Act
-        playerCharacter.play();
+        playerCharacter.doNextAction();
         
         // Assert
         Position finalPosition = WORLD.positionOf(playerCharacter);
@@ -140,9 +137,7 @@ public class PlayerCharacterTest {
     
     @Test
     public void character_should_dig_then_grab_gem() throws Exception {
-        // Arrange
-        PlayerCharacter playerCharacter = new PlayerCharacter();
-        WORLD.at(INITIAL_POSITION).addLocalizable(playerCharacter);
+        PlayerCharacter playerCharacter = createCharacter();
         Gem gem = new Gem();
         WORLD.at(INITIAL_POSITION).addLocalizable(gem);
         
@@ -156,10 +151,9 @@ public class PlayerCharacterTest {
     @Test
     public void character_with_quickturn_ability_may_move_immediately_after_turn() throws Exception {
         // Arrange
-        PlayerCharacter playerCharacter = new PlayerCharacter();
-        playerCharacter.addAbility(new QuickTurn());
+    	PlayerCharacter playerCharacter = createCharacter();
+        playerCharacter.addAbility(new TurnAbility(2));
         
-        WORLD.at(INITIAL_POSITION).addLocalizable(playerCharacter);
         playerCharacter.addAction(new Move(WORLD));
         
         // Act
@@ -173,10 +167,9 @@ public class PlayerCharacterTest {
     @Test
     public void character_with_quickturn_ability_may_turn_immediately_after_turn_but_cannot_move_anymore() throws Exception {
     	// Arrange
-    	PlayerCharacter playerCharacter = new PlayerCharacter();
-    	playerCharacter.addAbility(new QuickTurn());
+    	PlayerCharacter playerCharacter = createCharacter();
+    	playerCharacter.addAbility(new TurnAbility(2));
     	
-    	WORLD.at(INITIAL_POSITION).addLocalizable(playerCharacter);
     	playerCharacter.addAction(new TurnClockwise());
     	playerCharacter.addAction(new TurnClockwise());
     	playerCharacter.addAction(new Move(WORLD));
@@ -184,14 +177,76 @@ public class PlayerCharacterTest {
     	playerCharacter.addAction(new TurnClockwise());
     	
     	// Act
-    	playerCharacter.play();
-    	playerCharacter.play();
-    	playerCharacter.play();
+    	playerCharacter.doNextAction();
+    	playerCharacter.doNextAction();
+    	playerCharacter.doNextAction();
     	
     	// Assert
     	assertThat(WORLD.positionOf(playerCharacter)).isEqualTo(cartesian(1, 0));
     	assertThat(getInternalState(playerCharacter, "orientation")).isEqualTo(CartesianOrientation.NORTH);
     }
+    
+    @Test
+    public void character_cannot_fly_when_doesnt_have_the_fly_ability() throws Exception {
+    	// Arrange
+    	PlayerCharacter playerCharacter = createCharacter();
+    	
+    	// Act
+    	playerCharacter.doAction(new FlyAction(WORLD));
+    	
+    	// Assert
+    	assertThat(WORLD.positionOf(playerCharacter)).isEqualTo(INITIAL_POSITION);
+    }
+    
+    @Test
+    public void character_may_fly_when_is_able_to_fly() throws Exception {
+    	// Arrange
+    	PlayerCharacter playerCharacter = createCharacter();
+    	playerCharacter.addAbility(new FlyAbility());
+    	
+    	// Act
+    	playerCharacter.doAction(new FlyAction(WORLD));
+    	
+    	// Assert
+    	assertThat(WORLD.positionOf(playerCharacter)).isEqualTo(cartesian(1, 2));
+    }
+    
+    @Test
+    public void character_may_quick_fly_when_is_able_to_fly_quickly() throws Exception {
+    	// Arrange
+    	PlayerCharacter playerCharacter = createCharacter();
+    	playerCharacter.addAbility(new FlyAbility().quickly(2));
+    	
+    	playerCharacter.addAction(new FlyAction(WORLD));
+    	playerCharacter.addAction(new FlyAction(WORLD));
+    	playerCharacter.addAction(new FlyAction(WORLD));
+    	
+    	// Act
+    	playerCharacter.doNextAction();
+    	
+    	// Assert
+    	assertThat(WORLD.positionOf(playerCharacter)).isEqualTo(cartesian(1, 3));
+    }
+    
+    @Test
+    public void character_may_quick_fly_when_is_able_to_fly_quickly_but_only_to_fly() throws Exception {
+    	// Arrange
+    	PlayerCharacter playerCharacter = createCharacter();
+    	playerCharacter.addAbility(new FlyAbility().quickly(2));
+    	
+    	playerCharacter.addAction(new FlyAction(WORLD));
+    	Move moveAction = new Move(WORLD);
+		playerCharacter.addAction(moveAction);
+    	playerCharacter.addAction(new FlyAction(WORLD));
+    	
+    	// Act
+    	playerCharacter.doNextAction();
+    	
+    	// Assert
+    	assertThat(WORLD.positionOf(playerCharacter)).isEqualTo(cartesian(1, 2));
+    	assertThat(playerCharacter.getActionQueue()).startsWith(moveAction);
+    }
+
     
     // Utilitaires
     
@@ -226,4 +281,9 @@ public class PlayerCharacterTest {
         assertThat(getInternalState(playerCharacter, "orientation")).isEqualTo(expectedFinalOrientation);
     }
     
+    private PlayerCharacter createCharacter() {
+    	PlayerCharacter playerCharacter = new PlayerCharacter();
+    	WORLD.at(INITIAL_POSITION).addLocalizable(playerCharacter);
+    	return playerCharacter;
+    }
 }

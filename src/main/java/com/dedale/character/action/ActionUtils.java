@@ -1,15 +1,24 @@
 package com.dedale.character.action;
 
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Optional;
-
-import com.dedale.character.PlayerCharacter;
-import com.dedale.character.ability.Ability;
+import java.util.function.Predicate;
 
 class ActionUtils {
 
-	public void applyAbility(Class<? extends Ability> abilityClass, PlayerCharacter playerCharacter) {
-		Optional<? extends Ability> optAbility = playerCharacter.findAbility(abilityClass);
-		optAbility.ifPresent(ability -> ability.apply(playerCharacter));
+	@SafeVarargs
+	public final <T> boolean isSatisfiedBy(T t, Predicate<T>... restrictions) {
+		return isSatisfiedBy(t, Arrays.asList(restrictions));
 	}
-	
+
+	public final <T> boolean isSatisfiedBy(T t, Iterable<Predicate<T>> restrictions) {
+		Optional<T> optAction = Optional.ofNullable(t);
+		Iterator<Predicate<T>> restrictionsIterator = restrictions.iterator();
+		while (optAction.isPresent() && restrictionsIterator.hasNext()) {
+			optAction = optAction.filter(restrictionsIterator.next());
+		}
+		return optAction.isPresent();
+	}
+
 }

@@ -9,9 +9,6 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import com.dedale.character.ability.Ability;
-import com.dedale.character.ability.QuickTurn;
-import com.dedale.character.action.PlayerCharacterAction;
 import com.dedale.character.action.TurnClockwise;
 import com.dedale.character.action.TurnCounterClockwise;
 import com.dedale.item.Gem;
@@ -26,7 +23,7 @@ public class PlayerCharacter implements Localizable {
 	// TODO FH : c'est une FACTORY/Pool d'actions
 	private Map<String, PlayerCharacterAction> availableActionsByType = new HashMap<>();
 	private Collection<Gem> gems = new ArrayList<>();
-	private Collection<Ability> abilities = new ArrayList<>();
+	private Collection<PlayerCharacterAbility> abilities = new ArrayList<>();
 
 	public PlayerCharacter() {
 		this(CartesianOrientation.NORTH);
@@ -45,7 +42,7 @@ public class PlayerCharacter implements Localizable {
 	public void setOrientation(Orientation orientation) {
 		this.orientation = orientation;
 	}
-	
+
 	// actions
 
 	public Collection<PlayerCharacterAction> getActionQueue() {
@@ -53,19 +50,44 @@ public class PlayerCharacter implements Localizable {
 	}
 
 	public void addAction(PlayerCharacterAction action) {
-		actionQueue.add(action);
-	}
-
-	public void play() {
-		PlayerCharacterAction processingAction = nextAction();
-		if (processingAction == null) {
+		if (action == null) {
 			return;
 		}
+		actionQueue.add(action);
+	}
+	
+	private void addFirstAction(PlayerCharacterAction action) {
+		if (action == null) {
+			return;
+		}
+		actionQueue.addFirst(action);
+	}
+
+	public void doNextAction() {
+		PlayerCharacterAction processingAction = nextAction();
 		doAction(processingAction);
+	}
+	
+	public void doNextActionWhen(Predicate<PlayerCharacterAction> whenAction) {
+		PlayerCharacterAction processingAction = nextAction();
+		if (whenAction.test(processingAction)) {
+			doAction(processingAction);
+		} else {
+			addFirstAction(processingAction);
+		}
 	}
 
 	public void doAction(PlayerCharacterAction processingAction) {
-		processingAction.execute(this);
+		if (processingAction == null) {
+			return;
+		}
+		PlayerCharacterAction action = processingAction;
+		Optional<PlayerCharacterAbility> optAbility = findAbility(ability -> ability.handle(processingAction));
+		if (optAbility.isPresent()) {
+			action = optAbility.get().apply(action);
+		}
+		
+		action.execute(this);
 	}
 
 	@Deprecated
@@ -76,7 +98,7 @@ public class PlayerCharacter implements Localizable {
 		}
 	}
 
-	private PlayerCharacterAction nextAction() {
+	public PlayerCharacterAction nextAction() {
 		return actionQueue.pollFirst();
 	}
 
@@ -91,7 +113,7 @@ public class PlayerCharacter implements Localizable {
 	}
 
 	// inventory
-	
+
 	public Collection<Gem> getGems() {
 		return gems;
 	}
@@ -99,26 +121,26 @@ public class PlayerCharacter implements Localizable {
 	public void addGem(Gem gem) {
 		gems.add(gem);
 	}
-	
+
 	// abilities
 
-	public void addAbility(QuickTurn ability) {
+	public void addAbility(PlayerCharacterAbility ability) {
 		abilities.add(ability);
 	}
 
-	public Optional<Ability> findAbility(Predicate<Ability> predicate) {
+	public Optional<PlayerCharacterAbility> findAbility(Predicate<PlayerCharacterAbility> predicate) {
 		return abilities.stream().filter(predicate).findFirst();
 	}
 
-	public <A extends Ability> Optional<A> findAbility(Class<A> abilityClass) {
+	public <A extends PlayerCharacterAbility> Optional<A> findAbility(Class<A> abilityClass) {
 		return findAbility(abilityClass::isInstance).map(abilityClass::cast);
 	}
 
-	public Stream<Ability> findAbilityList(Predicate<Ability> predicate) {
+	public Stream<PlayerCharacterAbility> findAbilityList(Predicate<PlayerCharacterAbility> predicate) {
 		return abilities.stream().filter(predicate);
 	}
 
-	public <A extends Ability> Stream<A> findAbilityList(Class<A> abilityClass) {
+	public <A extends PlayerCharacterAbility> Stream<A> findAbilityList(Class<A> abilityClass) {
 		return findAbilityList(abilityClass::isInstance).map(abilityClass::cast);
 	}
 
