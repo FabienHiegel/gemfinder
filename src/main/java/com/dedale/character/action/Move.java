@@ -1,6 +1,7 @@
 package com.dedale.character.action;
 
 import com.dedale.character.PlayerCharacter;
+import com.dedale.character.PlayerCharacterAction;
 import com.dedale.world.Location;
 import com.dedale.world.Position;
 import com.dedale.world.World;

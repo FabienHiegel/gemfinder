@@ -1,14 +1,16 @@
 package com.dedale.character.action;
 
-import com.dedale.character.ability.Ability;
+import com.dedale.character.PlayerCharacterAbility;
+import com.dedale.character.PlayerCharacterAction;
 
-public class TurnAbility implements Ability {
+public class TurnAbility implements PlayerCharacterAbility {
 
 	private static final int DEFAULT_DEEP = 1;
 	private static final int DEFAULT_THRESHOLD = 1;
 
 	private int deep = DEFAULT_DEEP;
 	private int threshold = DEFAULT_THRESHOLD;
+	private ActionUtils actionUtils = new ActionUtils();
 
 	public TurnAbility() {
 		this(DEFAULT_THRESHOLD);
@@ -22,7 +24,7 @@ public class TurnAbility implements Ability {
 	public PlayerCharacterAction apply(PlayerCharacterAction action) {
 		if (deep < threshold) {
 			deep++;
-			return new QuickAction(action);
+			return action.andThen(PlayerCharacterAction.DO_NEXT_ACTION);
 		}
 		release();
 		return action;
@@ -34,7 +36,7 @@ public class TurnAbility implements Ability {
 
 	@Override
 	public boolean handle(PlayerCharacterAction action) {
-		return action instanceof TurnClockwise || action instanceof TurnCounterClockwise;
+		return actionUtils.isSatisfiedBy(action, TurnAction.class::isInstance);
 	}
 
 }

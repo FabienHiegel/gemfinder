@@ -1,8 +1,9 @@
 package com.dedale.character.action;
 
-import com.dedale.character.ability.Ability;
+import com.dedale.character.PlayerCharacterAbility;
+import com.dedale.character.PlayerCharacterAction;
 
-public class FlyAbility implements Ability {
+public class FlyAbility implements PlayerCharacterAbility {
 
 	private static final int DEFAULT_DEEP = 1;
 	private static final int DEFAULT_THRESHOLD = 1;
@@ -10,11 +11,12 @@ public class FlyAbility implements Ability {
 	private int deep = DEFAULT_DEEP;
 	private int threshold = DEFAULT_THRESHOLD;
 
-	@Override
+	private ActionUtils actionUtils = new ActionUtils();
+
 	public PlayerCharacterAction apply(PlayerCharacterAction action) {
 		if (deep < threshold) {
 			deep++;
-			return new QuickAction(action);
+			return action.andThen(playerCharacter -> playerCharacter.doNextActionWhen(FlyAction.class::isInstance));
 		}
 		release();
 		return action;
@@ -31,7 +33,7 @@ public class FlyAbility implements Ability {
 
 	@Override
 	public boolean handle(PlayerCharacterAction action) {
-		return action instanceof Fly;
+		return actionUtils.isSatisfiedBy(action, FlyAction.class::isInstance);
 	}
 
 }

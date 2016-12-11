@@ -3,15 +3,16 @@ package com.dedale.character.action;
 import java.util.Optional;
 
 import com.dedale.character.PlayerCharacter;
+import com.dedale.character.PlayerCharacterAction;
 import com.dedale.world.Location;
 import com.dedale.world.Position;
 import com.dedale.world.World;
 
-public class Fly implements PlayerCharacterAction {
+public class FlyAction implements PlayerCharacterAction {
 
 	private World world;
 
-	public Fly(World world) {
+	public FlyAction(World world) {
 		this.world = world;
 	}
 

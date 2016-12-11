@@ -7,11 +7,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.dedale.character.action.Dig;
-import com.dedale.character.action.Fly;
+import com.dedale.character.action.FlyAction;
 import com.dedale.character.action.FlyAbility;
 import com.dedale.character.action.Grab;
 import com.dedale.character.action.Move;
-import com.dedale.character.action.PlayerCharacterAction;
 import com.dedale.character.action.TurnAbility;
 import com.dedale.character.action.TurnClockwise;
 import com.dedale.character.action.TurnCounterClockwise;
@@ -115,7 +114,7 @@ public class PlayerCharacterTest {
         assertThat(playerCharacter.getActionQueue()).isEmpty();
         
         // Act
-        playerCharacter.play();
+        playerCharacter.doNextAction();
         
         // Assert
         Position finalPosition = WORLD.positionOf(playerCharacter);
@@ -178,9 +177,9 @@ public class PlayerCharacterTest {
     	playerCharacter.addAction(new TurnClockwise());
     	
     	// Act
-    	playerCharacter.play();
-    	playerCharacter.play();
-    	playerCharacter.play();
+    	playerCharacter.doNextAction();
+    	playerCharacter.doNextAction();
+    	playerCharacter.doNextAction();
     	
     	// Assert
     	assertThat(WORLD.positionOf(playerCharacter)).isEqualTo(cartesian(1, 0));
@@ -193,7 +192,7 @@ public class PlayerCharacterTest {
     	PlayerCharacter playerCharacter = createCharacter();
     	
     	// Act
-    	playerCharacter.doAction(new Fly(WORLD));
+    	playerCharacter.doAction(new FlyAction(WORLD));
     	
     	// Assert
     	assertThat(WORLD.positionOf(playerCharacter)).isEqualTo(INITIAL_POSITION);
@@ -206,7 +205,7 @@ public class PlayerCharacterTest {
     	playerCharacter.addAbility(new FlyAbility());
     	
     	// Act
-    	playerCharacter.doAction(new Fly(WORLD));
+    	playerCharacter.doAction(new FlyAction(WORLD));
     	
     	// Assert
     	assertThat(WORLD.positionOf(playerCharacter)).isEqualTo(cartesian(1, 2));
@@ -218,12 +217,12 @@ public class PlayerCharacterTest {
     	PlayerCharacter playerCharacter = createCharacter();
     	playerCharacter.addAbility(new FlyAbility().quickly(2));
     	
-    	playerCharacter.addAction(new Fly(WORLD));
-    	playerCharacter.addAction(new Fly(WORLD));
-    	playerCharacter.addAction(new Fly(WORLD));
+    	playerCharacter.addAction(new FlyAction(WORLD));
+    	playerCharacter.addAction(new FlyAction(WORLD));
+    	playerCharacter.addAction(new FlyAction(WORLD));
     	
     	// Act
-    	playerCharacter.play();
+    	playerCharacter.doNextAction();
     	
     	// Assert
     	assertThat(WORLD.positionOf(playerCharacter)).isEqualTo(cartesian(1, 3));
@@ -235,15 +234,17 @@ public class PlayerCharacterTest {
     	PlayerCharacter playerCharacter = createCharacter();
     	playerCharacter.addAbility(new FlyAbility().quickly(2));
     	
-    	playerCharacter.addAction(new Fly(WORLD));
-    	playerCharacter.addAction(new Move(WORLD));
-    	playerCharacter.addAction(new Fly(WORLD));
+    	playerCharacter.addAction(new FlyAction(WORLD));
+    	Move moveAction = new Move(WORLD);
+		playerCharacter.addAction(moveAction);
+    	playerCharacter.addAction(new FlyAction(WORLD));
     	
     	// Act
-    	playerCharacter.play();
+    	playerCharacter.doNextAction();
     	
     	// Assert
     	assertThat(WORLD.positionOf(playerCharacter)).isEqualTo(cartesian(1, 2));
+    	assertThat(playerCharacter.getActionQueue()).startsWith(moveAction);
     }
 
     

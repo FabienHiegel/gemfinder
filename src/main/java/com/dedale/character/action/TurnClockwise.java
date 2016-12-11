@@ -1,12 +1,11 @@
 package com.dedale.character.action;
 
-import com.dedale.character.PlayerCharacter;
+import com.dedale.world.Orientation;
 
-public class TurnClockwise implements PlayerCharacterAction {
+public class TurnClockwise implements TurnAction {
 	
-	@Override
-	public void execute(PlayerCharacter playerCharacter) {
-		playerCharacter.setOrientation(playerCharacter.getOrientation().clockwise());
+	public Orientation nextOrientation(Orientation orientation) {
+		return orientation.clockwise();
 	}
 
 }
