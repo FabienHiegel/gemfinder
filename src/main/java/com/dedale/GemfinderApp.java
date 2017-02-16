@@ -1,20 +1,22 @@
 package com.dedale;
 
-import com.dedale.console.ConsoleIO;
+import java.util.ArrayList;
+import java.util.Collection;
+
+import com.dedale.engine.InterpreterEngine;
+import com.dedale.engine.execution.Exit;
 
 public class GemfinderApp {
     
     private boolean running;
-    private ConsoleIO consoleIO;
     private String appTitle;
+    private Collection<InterpreterEngine> engines = new ArrayList<>();
     
-    GemfinderApp(ConsoleIO consoleIO) {
-        this.consoleIO = consoleIO;
-        this.appTitle = "# Gemfinder App";
+    GemfinderApp() {
+        this.appTitle = "Gemfinder App";
     }
     
     public void start() {
-        consoleIO.appendln(appTitle).ln();
         running = true;
         while (isRunning()) {
             run();
@@ -26,18 +28,26 @@ public class GemfinderApp {
     }
     
     void run() {
-        String commandLine = consoleIO.nextCommandLine();
-        
-//        String commandLine = input.nextCommandLine();
-//        AppCommand command = commandMapper.parse(commandLine);
-//        AppResult result = controller.execute(command);
-//        output.consume(result);
-        consoleIO.appendln(commandLine);
+        for (InterpreterEngine engine : engines) {
+            engine.run();
+        }
     }
     
     boolean isRunning() {
         return running;
     }
     
+    public String getAppTitle() {
+        return appTitle;
+    }
+    
+    public void engine(InterpreterEngine engine){
+        defaultExit(engine);
+        engines.add(engine);
+    }
+
+    private void defaultExit(InterpreterEngine engine) {
+        engine.bind(InterpreterEngine.keywords.EXIT, new Exit(this));
+    }
     
 }

@@ -1,4 +1,4 @@
-package com.dedale.console;
+package com.dedale.engine.console;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
@@ -43,7 +43,7 @@ public class ConsoleIO {
     // Writer
     
     public ConsoleIO append(String str) {
-        if(isEmpty(str)){
+        if (isEmpty(str)) {
             return this;
         }
         out.print(str);
@@ -56,7 +56,7 @@ public class ConsoleIO {
     }
     
     public ConsoleIO appendln(String str) {
-        if(isEmpty(str)){
+        if (isEmpty(str)) {
             return this;
         }
         return append(str).ln();

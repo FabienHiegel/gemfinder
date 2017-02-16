@@ -1,4 +1,4 @@
-package com.dedale.console;
+package com.dedale.engine.console;
 
 import java.io.IOException;
 import java.io.OutputStream;

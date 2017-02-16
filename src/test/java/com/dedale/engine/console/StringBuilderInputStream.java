@@ -1,4 +1,4 @@
-package com.dedale.console;
+package com.dedale.engine.console;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,6 +23,7 @@ public final class StringBuilderInputStream extends InputStream {
         builder.append(str);
         return this;
     }
+    
     public StringBuilderInputStream appendln(String str){
         return append(str).ln();
     }
