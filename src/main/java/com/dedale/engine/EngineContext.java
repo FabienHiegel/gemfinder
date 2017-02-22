@@ -4,11 +4,11 @@ import com.dedale.engine.execution.ExecutionContext;
 
 public class EngineContext {
     
-    String commandLine;
     private ExecutionContext executionContext = new ExecutionContext(this);
+    public EngineParser parser;
     
     public EngineContext(String commandLine) {
-        this.commandLine = commandLine;
+        this.parser = new EngineParser(commandLine);
     }
     
     public ExecutionContext getExecutionContext() {

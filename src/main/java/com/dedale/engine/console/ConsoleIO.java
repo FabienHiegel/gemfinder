@@ -28,7 +28,7 @@ public class ConsoleIO {
         this.in = in;
         this.out = out;
         this.inputPrefix = inputPrefix;
-        this.processingMessage = processingMessage;
+        // this.processingMessage; = processingMessage;
     }
     
     // Reader

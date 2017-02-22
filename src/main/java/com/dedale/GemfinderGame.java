@@ -7,7 +7,7 @@ import com.dedale.character.PlayerCharacter;
 import com.dedale.world.Position;
 import com.dedale.world.World;
 
-public class GemFinderGame {
+public class GemfinderGame {
     
     private World world;
     private int turnsCount;

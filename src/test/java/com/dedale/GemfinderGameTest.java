@@ -16,14 +16,14 @@ import com.dedale.world.cartesian.CartesianPosition;
 import com.dedale.world.cartesian.CartesianWorld;
 import com.dedale.world.landforms.Mountain;
 
-public class GemFinderGameTest {
+public class GemfinderGameTest {
     
-    private GemFinderGame game;
+    private GemfinderGame game;
     private World gameworld;
     
     @Before
     public void initializeGemFinderGame() {
-        game = new GemFinderGame();
+        game = new GemfinderGame();
     }
     
     @Before
@@ -221,7 +221,7 @@ public class GemFinderGameTest {
     }
     
     private static String getResourceFile(String filePath) {
-        return TestUtils.getResourceFile(GemFinderGameTest.class, filePath);
+        return TestUtils.getResourceFile(GemfinderGameTest.class, filePath);
     }
     
 }

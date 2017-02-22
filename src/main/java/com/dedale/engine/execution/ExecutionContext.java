@@ -6,8 +6,8 @@ import com.dedale.engine.RendererContext;
 public class ExecutionContext {
     
     private EngineContext engineContext;
-    private  RendererContext rendererContext = new RendererContext();
-
+    private RendererContext rendererContext = new RendererContext();
+    
     public ExecutionContext(EngineContext engineContext) {
         this.engineContext = engineContext;
     }

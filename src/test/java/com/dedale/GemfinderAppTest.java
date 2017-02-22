@@ -5,11 +5,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.dedale.engine.InterpreterEngine;
 import com.dedale.engine.console.ConsoleIO;
 import com.dedale.engine.console.ConsoleInterpreterEngine;
 import com.dedale.engine.console.StringBuilderInputStream;
 import com.dedale.engine.console.StringBuilderOutputStream;
-import com.dedale.engine.execution.Echo;
+import com.dedale.engine.execution.StdOut;
 
 public class GemfinderAppTest {
     
@@ -54,7 +55,7 @@ public class GemfinderAppTest {
     @Test
     public void echo_command_should_print_given_value() throws Exception {
         // Given
-        engine.bind("echo", new Echo());
+        engine.bind("echo", StdOut::new);
         
         // When
         runCommandLine("echo first");

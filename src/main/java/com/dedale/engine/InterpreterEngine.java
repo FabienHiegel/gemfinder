@@ -1,12 +1,18 @@
 package com.dedale.engine;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import com.dedale.engine.execution.Command;
+import com.dedale.engine.execution.CommandArgument;
 import com.dedale.engine.execution.ExecutionContext;
+import com.dedale.engine.execution.NoOperation;
+import com.dedale.engine.execution.StdError;
+import com.dedale.engine.execution.StringConstantArgument;
 
 public class InterpreterEngine {
     
@@ -19,7 +25,7 @@ public class InterpreterEngine {
     
     private Supplier<String> in;
     private Consumer<String> out;
-    private Map<String, Command> commandsByName = new HashMap<>();
+    private Map<String, Supplier<Command>> commandsByName = new HashMap<>();
     
     public InterpreterEngine(Supplier<String> in, Consumer<String> out) {
         this.in = in;
@@ -55,20 +61,37 @@ public class InterpreterEngine {
     //
     
     public Command parseCommand(EngineContext engineContext) {
-        String cmd = engineContext.commandLine.split(" ")[0];
-        if (commandsByName.containsKey(cmd)) {
-            return commandsByName.get(cmd);
+        EngineParser parser = engineContext.parser;
+        if (parser.isEmpty()) {
+            return new NoOperation();
         }
-        return new Command() {
+        ExecutionContext executionContext = engineContext.getExecutionContext();
+        
+        String cmd = parser.nextCommand();
+        if (commandsByName.containsKey(cmd)) {
+            Command command = commandsByName.get(cmd).get();
             
-            @Override
-            public void execute(ExecutionContext context) {
-                context.getRendererContext().err.append(cmd).append(": command not found");
-            }
-        };
+            List<CommandArgument<?>> arguments = parser.arguments();
+            command = applyArguments(executionContext, command, arguments.iterator());
+            return command;
+        }
+        StdError stdError = new StdError();
+        stdError.accept(executionContext, new StringConstantArgument("commandName", cmd));
+        stdError.accept(executionContext, new StringConstantArgument("errorMessage", ": command not found"));
+        return stdError;
     }
     
-    public void bind(String argument, Command command) {
+    private Command applyArguments(ExecutionContext executionContext, Command command, Iterator<CommandArgument<?>> iterator) {
+        if(!iterator.hasNext()){
+            return command;
+        }
+        CommandArgument<?> argument = iterator.next();
+        Command arguedCommand = applyArguments(executionContext, command, iterator);
+        return arguedCommand.accept(executionContext, argument);
+    }
+
+
+    public void bind(String argument, Supplier<Command> command) {
         commandsByName.put(argument, command);
     }
     
