@@ -5,9 +5,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.dedale.engine.execution.JavaneseStdOut;
-import com.dedale.engine.execution.ReverseStdOut;
-import com.dedale.engine.execution.StdOut;
+import com.dedale.engine.execution.core.JavaneseStdOut;
+import com.dedale.engine.execution.core.ReverseStdOut;
+import com.dedale.engine.execution.core.StdOut;
 
 public class InterpreterEngineTest {
     

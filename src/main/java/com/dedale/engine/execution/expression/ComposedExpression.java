@@ -1,4 +1,4 @@
-package com.dedale.engine.execution.eval;
+package com.dedale.engine.execution.expression;
 
 import com.dedale.engine.execution.ExecutionContext;
 
@@ -6,9 +6,9 @@ public class ComposedExpression<T> implements Expression<T> {
     
     private Expression<T> exp1;
     private Expression<T> exp2;
-    private ExpressionOperation<T> operation;
+    private Operation<T> operation;
     
-    public ComposedExpression(ExpressionOperation<T> op, Expression<T> exp1, Expression<T> exp2) {
+    public ComposedExpression(Operation<T> op, Expression<T> exp1, Expression<T> exp2) {
         this.operation = op;
         this.exp1 = exp1;
         this.exp2 = exp2;
@@ -20,17 +20,8 @@ public class ComposedExpression<T> implements Expression<T> {
     }
     
     @Override
-    public ComposedExpression<T> andThen(ExpressionOperation<T> operation, Expression<T> after) {
+    public ComposedExpression<T> andThen(Operation<T> operation, Expression<T> after) {
         return new ComposedExpression<>(operation, this, after);
-    }
-    
-    @FunctionalInterface
-    public static interface ExpressionOperation<T> {
-        T operate(T first, T second);
-        
-        default ComposedExpression<T> of(Expression<T> exp1, Expression<T> exp2) {
-            return new ComposedExpression<>(this, exp1, exp2);
-        }
     }
     
     // Object implementation methods

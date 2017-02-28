@@ -1,15 +1,15 @@
 package com.dedale.engine.execution;
 
-import com.dedale.engine.execution.eval.Expression;
+import com.dedale.engine.execution.expression.Expression;
 
-public class CommandExpressionArgument<T> implements CommandArgument<T> {
+public class ExpressionCommandArgument<T> implements CommandArgument<T> {
     
     private Expression<T> expression;
     private String name;
     
-    public CommandExpressionArgument(String name, Expression<T> delegateExpression) {
+    public ExpressionCommandArgument(String name, Expression<T> expression) {
         this.name = name;
-        this.expression = delegateExpression;
+        this.expression = expression;
     }
     
     @Override

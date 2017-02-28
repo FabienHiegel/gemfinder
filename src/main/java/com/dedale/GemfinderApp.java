@@ -6,8 +6,8 @@ import java.util.Collection;
 import com.dedale.engine.InterpreterEngine;
 import com.dedale.engine.console.ConsoleIO;
 import com.dedale.engine.console.ConsoleInterpreterEngine;
-import com.dedale.engine.execution.Exit;
-import com.dedale.engine.execution.StdOut;
+import com.dedale.engine.execution.core.Exit;
+import com.dedale.engine.execution.core.StdOut;
 
 public class GemfinderApp {
     

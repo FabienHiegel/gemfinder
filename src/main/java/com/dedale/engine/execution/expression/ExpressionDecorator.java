@@ -1,7 +1,6 @@
-package com.dedale.engine.execution.eval;
+package com.dedale.engine.execution.expression;
 
 import com.dedale.engine.execution.ExecutionContext;
-import com.dedale.engine.execution.eval.ComposedExpression.ExpressionOperation;
 
 public class ExpressionDecorator<T> implements Expression<T> {
     
@@ -18,22 +17,8 @@ public class ExpressionDecorator<T> implements Expression<T> {
         return decorator.decorate(expression.evaluate(executionContext));
     }
     
-    @FunctionalInterface
-    public static interface Decorator<T> {
-        T decorate(T exp);
-        
-        default <E extends Expression<T>> ExpressionDecorator<T> decorate(E expression) {
-            return new ExpressionDecorator<>(this, expression);
-        }
-        
-        default Decorator<T> compose(Decorator<T> before) {
-            return t -> this.decorate(before.decorate(t));
-        }
-        
-    }
-    
     @Override
-    public ExpressionDecorator<T> andThen(ExpressionOperation<T> operation, Expression<T> expression) {
+    public ExpressionDecorator<T> andThen(Operation<T> operation, Expression<T> expression) {
         this.expression = this.expression.andThen(operation, expression);
         return this;
     }

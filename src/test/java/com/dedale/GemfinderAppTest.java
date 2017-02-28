@@ -5,12 +5,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.dedale.engine.InterpreterEngine;
 import com.dedale.engine.console.ConsoleIO;
 import com.dedale.engine.console.ConsoleInterpreterEngine;
 import com.dedale.engine.console.StringBuilderInputStream;
 import com.dedale.engine.console.StringBuilderOutputStream;
-import com.dedale.engine.execution.StdOut;
+import com.dedale.engine.execution.core.StdOut;
 
 public class GemfinderAppTest {
     

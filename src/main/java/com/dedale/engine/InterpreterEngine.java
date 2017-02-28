@@ -10,9 +10,9 @@ import java.util.function.Supplier;
 import com.dedale.engine.execution.Command;
 import com.dedale.engine.execution.CommandArgument;
 import com.dedale.engine.execution.ExecutionContext;
-import com.dedale.engine.execution.NoOperation;
-import com.dedale.engine.execution.StdError;
 import com.dedale.engine.execution.StringConstantArgument;
+import com.dedale.engine.execution.core.NoOperation;
+import com.dedale.engine.execution.core.StdError;
 
 public class InterpreterEngine {
     
@@ -81,13 +81,14 @@ public class InterpreterEngine {
         return stdError;
     }
     
-    private Command applyArguments(ExecutionContext executionContext, Command command, Iterator<CommandArgument<?>> iterator) {
-        if(!iterator.hasNext()){
+    private Command applyArguments(ExecutionContext executionContext, Command command, Iterator<CommandArgument<?>> arguments) {
+        if(!arguments.hasNext()){
             return command;
         }
-        CommandArgument<?> argument = iterator.next();
-        Command arguedCommand = applyArguments(executionContext, command, iterator);
-        return arguedCommand.accept(executionContext, argument);
+        CommandArgument<?> argument = arguments.next();
+        Command arguedCommand = command.accept(executionContext, argument);
+        
+        return applyArguments(executionContext, arguedCommand, arguments);
     }
 
 
