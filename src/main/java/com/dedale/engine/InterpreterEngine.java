@@ -1,8 +1,6 @@
 package com.dedale.engine;
 
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -42,12 +40,18 @@ public class InterpreterEngine {
     
     public void run() {
         String commandLine = nextCommandLine();
-        
-        EngineContext engineContext = new EngineContext(commandLine);
+        RendererContext rendererContext = runLine(commandLine);
+        render(rendererContext.getOutput());
+    }
+
+    protected RendererContext runLine(String commandLine) {
+        EngineContext engineContext = createContext(commandLine);
         Command command = parseCommand(engineContext);
-        RendererContext context = executeCommand(engineContext, command);
-        
-        render(context.getOutput());
+        return executeCommand(engineContext, command);
+    }
+
+    private EngineContext createContext(String commandLine) {
+        return new EngineContext(commandLine);
     }
     
     private RendererContext executeCommand(EngineContext engineContext, Command command) {
@@ -71,8 +75,7 @@ public class InterpreterEngine {
         if (commandsByName.containsKey(cmd)) {
             Command command = commandsByName.get(cmd).get();
             
-            List<CommandArgument<?>> arguments = parser.arguments();
-            command = applyArguments(executionContext, command, arguments.iterator());
+            command = applyArguments(executionContext, command, parser);
             return command;
         }
         StdError stdError = new StdError();
@@ -81,17 +84,16 @@ public class InterpreterEngine {
         return stdError;
     }
     
-    private Command applyArguments(ExecutionContext executionContext, Command command, Iterator<CommandArgument<?>> arguments) {
-        if(!arguments.hasNext()){
+    private Command applyArguments(ExecutionContext executionContext, Command command, EngineParser parser) {
+        if (parser.isEmpty()) {
             return command;
         }
-        CommandArgument<?> argument = arguments.next();
+        CommandArgument<?> argument = parser.nextArgument();
         Command arguedCommand = command.accept(executionContext, argument);
         
-        return applyArguments(executionContext, arguedCommand, arguments);
+        return applyArguments(executionContext, arguedCommand, parser);
     }
-
-
+    
     public void bind(String argument, Supplier<Command> command) {
         commandsByName.put(argument, command);
     }

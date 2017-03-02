@@ -17,12 +17,6 @@ public class ExpressionDecorator<T> implements Expression<T> {
         return decorator.decorate(expression.evaluate(executionContext));
     }
     
-    @Override
-    public ExpressionDecorator<T> andThen(Operation<T> operation, Expression<T> expression) {
-        this.expression = this.expression.andThen(operation, expression);
-        return this;
-    }
-    
     // Object implementation methods
     
     @Override
