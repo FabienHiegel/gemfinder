@@ -20,7 +20,7 @@ public class Exit implements Command {
     }
     
     @Override
-    public <T> Command accept(ExecutionContext context, CommandArgument<T> argument) {
+    public Command accept(ExecutionContext context, CommandArgument argument) {
         return this;
     }
     

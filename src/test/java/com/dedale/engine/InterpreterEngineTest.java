@@ -16,7 +16,7 @@ public class InterpreterEngineTest {
     private InterpreterEngine engine;
     
     @Before
-    public void initilizeInterpreter() {
+    public void initializeInterpreter() {
         engine = new InterpreterEngine(() -> {
             String re = in.toString();
             in = new StringBuilder();

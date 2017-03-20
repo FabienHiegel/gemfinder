@@ -1,4 +1,4 @@
-package com.dedale.engine;
+package com.dedale.engine.renderer;
 
 public class RendererContext {
     

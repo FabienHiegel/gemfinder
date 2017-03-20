@@ -1,9 +1,8 @@
 package com.dedale.engine.execution;
 
-import com.dedale.engine.execution.expression.Expression;
-
-public interface CommandArgument<T> extends Expression<T> {
+public interface CommandArgument {
     
     String name();
     
+    <T> T evaluate(ExecutionContext executionContext);
 }

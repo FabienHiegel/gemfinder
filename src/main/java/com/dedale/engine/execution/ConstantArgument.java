@@ -1,15 +1,13 @@
 package com.dedale.engine.execution;
 
-import com.dedale.engine.execution.expression.Expression;
-
-public class ExpressionCommandArgument<V> implements CommandArgument {
+public class ConstantArgument<T> implements CommandArgument {
     
-    private Expression<V> expression;
     private String name;
+    private T constant;
     
-    public ExpressionCommandArgument(String name, Expression<V> expression) {
+    public ConstantArgument(String name, T constant) {
         this.name = name;
-        this.expression = expression;
+        this.constant = constant;
     }
     
     @Override
@@ -19,8 +17,8 @@ public class ExpressionCommandArgument<V> implements CommandArgument {
     
     @Override
     @SuppressWarnings("unchecked")
-    public V evaluate(ExecutionContext executionContext) {
-        return expression.evaluate(executionContext);
+    public T evaluate(ExecutionContext executionContext) {
+        return constant;
     }
     
     @Override
@@ -28,7 +26,7 @@ public class ExpressionCommandArgument<V> implements CommandArgument {
         StringBuilder s = new StringBuilder(getClass().getSimpleName());
         s.append('{');
         s.append("name=").append(name);
-        s.append(", expression=").append(expression);
+        s.append(", constant=").append(constant);
         s.append('}');
         return s.toString();
     }

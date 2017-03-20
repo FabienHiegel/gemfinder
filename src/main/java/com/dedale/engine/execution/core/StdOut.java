@@ -37,14 +37,13 @@ public class StdOut implements Command {
         return expressionDecorator.decorate(expression).evaluate(engineContext);
     }
     
-    protected void appendStringExpression(CommandArgument<String> stringArgument) {
-        expression = expression.andThen(appendExpressions, stringArgument);
+    protected void appendStringExpression(CommandArgument argument) {
+        expression = expression.andThen(appendExpressions, argument::evaluate);
     }
     
     @Override
-    public <T> Command accept(ExecutionContext context, CommandArgument<T> argument) {
+    public Command accept(ExecutionContext context, CommandArgument argument) {
         String argumentName = argument.name();
-        CommandArgument<String> stringArgument = (CommandArgument<String>) argument;
         switch (argumentName) {
             case "-r":
             case "reverse":
@@ -55,7 +54,7 @@ public class StdOut implements Command {
                 expressionDecorator = expressionDecorator.compose(javanese);
                 return this;
             default:
-                appendStringExpression(stringArgument);
+                appendStringExpression(argument);
                 return this;
         }
     }

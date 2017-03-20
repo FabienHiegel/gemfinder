@@ -4,6 +4,6 @@ public interface Command {
     
     void execute(ExecutionContext context);
     
-    <T> Command accept(ExecutionContext context, CommandArgument<T> argument);
+    Command accept(ExecutionContext context, CommandArgument argument);
     
 }

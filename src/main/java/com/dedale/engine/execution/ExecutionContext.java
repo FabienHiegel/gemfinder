@@ -1,15 +1,13 @@
 package com.dedale.engine.execution;
 
-import com.dedale.engine.EngineContext;
-import com.dedale.engine.RendererContext;
+import com.dedale.engine.renderer.RendererContext;
 
 public class ExecutionContext {
     
-    private EngineContext engineContext;
-    private RendererContext rendererContext = new RendererContext();
+    private RendererContext rendererContext;
     
-    public ExecutionContext(EngineContext engineContext) {
-        this.engineContext = engineContext;
+    public ExecutionContext(RendererContext rendererContext) {
+        this.rendererContext = rendererContext;
     }
     
     public RendererContext getRendererContext() {

@@ -14,7 +14,7 @@ public class StdError implements Command {
     }
     
     @Override
-    public <T> Command accept(ExecutionContext context, CommandArgument<T> argument) {
+    public Command accept(ExecutionContext context, CommandArgument argument) {
         input += argument.evaluate(context);
         return this;
     }

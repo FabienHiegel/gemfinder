@@ -1,16 +1,13 @@
 package com.dedale.engine;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import com.dedale.engine.execution.Command;
-import com.dedale.engine.execution.CommandArgument;
 import com.dedale.engine.execution.ExecutionContext;
-import com.dedale.engine.execution.StringConstantArgument;
-import com.dedale.engine.execution.core.NoOperation;
-import com.dedale.engine.execution.core.StdError;
+import com.dedale.engine.parsing.ParseConfiguration;
+import com.dedale.engine.parsing.ParseEngine;
+import com.dedale.engine.renderer.RendererContext;
 
 public class InterpreterEngine {
     
@@ -23,79 +20,61 @@ public class InterpreterEngine {
     
     private Supplier<String> in;
     private Consumer<String> out;
-    private Map<String, Supplier<Command>> commandsByName = new HashMap<>();
+    private ParseConfiguration parseConfiguration;
     
     public InterpreterEngine(Supplier<String> in, Consumer<String> out) {
         this.in = in;
         this.out = out;
+        this.parseConfiguration = new ParseConfiguration();
+    }
+    
+    public void run() {
+        String commandLine = nextCommandLine();
+        EngineContext engineContext = createContext(commandLine);
+        runLine(engineContext);
     }
     
     private String nextCommandLine() {
         return in.get();
     }
     
-    private void render(String output) {
-        out.accept(output);
-    }
-    
-    public void run() {
-        String commandLine = nextCommandLine();
-        RendererContext rendererContext = runLine(commandLine);
-        render(rendererContext.getOutput());
-    }
-
-    protected RendererContext runLine(String commandLine) {
-        EngineContext engineContext = createContext(commandLine);
-        Command command = parseCommand(engineContext);
-        return executeCommand(engineContext, command);
-    }
-
-    private EngineContext createContext(String commandLine) {
+    protected EngineContext createContext(String commandLine) {
         return new EngineContext(commandLine);
     }
     
-    private RendererContext executeCommand(EngineContext engineContext, Command command) {
-        ExecutionContext context = engineContext.getExecutionContext();
-        command.execute(context);
-        return context.getRendererContext();
+    private void runLine(EngineContext engineContext) {
+        Command command = parseCommand(engineContext);
+        executeCommand(engineContext, command);
+        render(engineContext);
     }
     
-    //
-    // Parsers
-    //
+    // Parse
     
-    public Command parseCommand(EngineContext engineContext) {
-        EngineParser parser = engineContext.parser;
-        if (parser.isEmpty()) {
-            return new NoOperation();
-        }
-        ExecutionContext executionContext = engineContext.getExecutionContext();
-        
-        String cmd = parser.nextCommand();
-        if (commandsByName.containsKey(cmd)) {
-            Command command = commandsByName.get(cmd).get();
-            
-            command = applyArguments(executionContext, command, parser);
-            return command;
-        }
-        StdError stdError = new StdError();
-        stdError.accept(executionContext, new StringConstantArgument("commandName", cmd));
-        stdError.accept(executionContext, new StringConstantArgument("errorMessage", ": command not found"));
-        return stdError;
+    private Command parseCommand(EngineContext engineContext) {
+        ParseEngine parseEngine = createParseEngine();
+        return parseEngine.parseCommand(engineContext.getParseContext());
     }
     
-    private Command applyArguments(ExecutionContext executionContext, Command command, EngineParser parser) {
-        if (parser.isEmpty()) {
-            return command;
-        }
-        CommandArgument<?> argument = parser.nextArgument();
-        Command arguedCommand = command.accept(executionContext, argument);
-        
-        return applyArguments(executionContext, arguedCommand, parser);
+    protected ParseEngine createParseEngine() {
+        return new ParseEngine(parseConfiguration);
     }
     
     public void bind(String argument, Supplier<Command> command) {
-        commandsByName.put(argument, command);
+        parseConfiguration.bind(argument, command);
+    }
+    
+    // Execute
+    
+    private void executeCommand(EngineContext engineContext, Command command) {
+        ExecutionContext context = engineContext.getExecutionContext();
+        command.execute(context);
+    }
+    
+    // Render
+    
+    private void render(EngineContext engineContext) {
+        RendererContext rendererContext = engineContext.getRendereContext();
+        out.accept(rendererContext.getOutput());
     }
     
 }
