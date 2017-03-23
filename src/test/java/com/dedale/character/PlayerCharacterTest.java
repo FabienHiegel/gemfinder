@@ -1,7 +1,6 @@
 package com.dedale.character;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.internal.util.reflection.Whitebox.getInternalState;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -177,7 +176,7 @@ public class PlayerCharacterTest {
         
         // Assert
         assertThat(finalPosition.toString()).isEqualTo(expectedFinalPosition.toString());
-        assertThat(getInternalState(playerCharacter, "orientation")).isEqualTo(expectedFinalOrientation);
+        assertThat(playerCharacter.orientation).isEqualTo(expectedFinalOrientation);
     }
     
 }
